@@ -1,4 +1,5 @@
 import { Component } from "@angular/core";
+import { AuthenticationService } from "../authentication/authentication.service";
 
 @Component({
   selector: "login-card-component",
@@ -53,6 +54,8 @@ import { Component } from "@angular/core";
               <mat-icon>{{ hide ? "visibility_off" : "visibility" }}</mat-icon>
             </button>
           </mat-form-field>
+
+          <button mat-button color="primary" (click)="submit()">Sign In</button>
         </form>
       </mat-card-content>
     </mat-card>
@@ -65,4 +68,10 @@ export class LoginCardComponent {
   password = "";
 
   hide = true;
+
+  constructor(private auth: AuthenticationService) {}
+
+  submit() {
+    this.auth.login(this.account, this.password);
+  }
 }

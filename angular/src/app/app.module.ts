@@ -8,23 +8,22 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { MatCardModule } from "@angular/material/card";
 import { MatIconModule } from "@angular/material/icon";
 import { FormsModule } from "@angular/forms";
-import { AngularFireDatabaseModule } from "@angular/fire/database";
-import { AngularFireModule } from "@angular/fire";
-import { environment } from "src/environments/environment";
-import { AngularFireAuthModule } from "@angular/fire/auth";
 
 import { LoginComponent } from "./pages/login.page";
 import { LoginCardComponent } from "./components/login-card.component";
 import { MatInputModule } from "@angular/material/input";
 import { AppRoot } from "./app.component";
+import { AngularFireModule } from "@angular/fire";
+import { AngularFireAnalyticsModule } from "@angular/fire/analytics";
+import { AngularFirestoreModule } from "@angular/fire/firestore";
+import { environment } from "src/environments/environment";
 
 @NgModule({
   declarations: [AppRoot, LoginComponent, LoginCardComponent],
   imports: [
     AngularFireModule.initializeApp(environment.firebase),
-    AngularFireDatabaseModule,
-    AngularFireAuthModule,
     BrowserAnimationsModule,
+    AngularFirestoreModule,
     FormsModule,
     MatFormFieldModule,
     MatIconModule,

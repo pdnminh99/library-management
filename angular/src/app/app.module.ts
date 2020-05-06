@@ -14,7 +14,6 @@ import { LoginCardComponent } from "./components/login-card.component";
 import { MatInputModule } from "@angular/material/input";
 import { AppRoot } from "./app.component";
 import { AngularFireModule } from "@angular/fire";
-import { AngularFireAnalyticsModule } from "@angular/fire/analytics";
 import { AngularFirestoreModule } from "@angular/fire/firestore";
 import { environment } from "src/environments/environment";
 

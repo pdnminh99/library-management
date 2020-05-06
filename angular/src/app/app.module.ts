@@ -1,40 +1,40 @@
 import { BrowserModule } from "@angular/platform-browser";
-import { SimpleChanges } from "@angular/core";
-import { NgModule, Component, OnChanges } from "@angular/core";
+import { NgModule } from "@angular/core";
+import { MatButtonModule } from "@angular/material/button";
+import { MatFormFieldModule } from "@angular/material/form-field";
 
 import { AppRoutingModule } from "./app-routing.module";
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { MatCardModule } from "@angular/material/card";
+import { MatIconModule } from "@angular/material/icon";
+import { FormsModule } from "@angular/forms";
+import { AngularFireDatabaseModule } from "@angular/fire/database";
+import { AngularFireModule } from "@angular/fire";
+import { environment } from "src/environments/environment";
+import { AngularFireAuthModule } from "@angular/fire/auth";
 
-@Component({
-  selector: "child-node",
-  template: ` <h1>Child Node</h1> `,
-})
-class AppChild implements OnChanges {
-  ngOnChanges(_changes: SimpleChanges): void {
-    console.log("Child Node is changed.");
-  }
-}
-
-@Component({
-  selector: "app-root",
-  template: `
-    <button (click)="switch()">Click me</button>
-    <h1 *ngIf="isTrue">State is true</h1>
-    <h1 *ngIf="!isTrue">State is false</h1>
-    <child-node></child-node>
-  `,
-})
-class AppComponent {
-  public isTrue = true;
-
-  public switch(): void {
-    this.isTrue = !this.isTrue;
-  }
-}
+import { LoginComponent } from "./pages/login.page";
+import { LoginCardComponent } from "./components/login-card.component";
+import { MatInputModule } from "@angular/material/input";
+import { AppRoot } from "./app.component";
 
 @NgModule({
-  declarations: [AppComponent, AppChild],
-  imports: [BrowserModule, AppRoutingModule],
+  declarations: [AppRoot, LoginComponent, LoginCardComponent],
+  imports: [
+    AngularFireModule.initializeApp(environment.firebase),
+    AngularFireDatabaseModule,
+    AngularFireAuthModule,
+    BrowserAnimationsModule,
+    FormsModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatButtonModule,
+    BrowserModule,
+    MatInputModule,
+    MatCardModule,
+    AppRoutingModule,
+  ],
   providers: [],
-  bootstrap: [AppComponent],
+  bootstrap: [AppRoot],
 })
 export class AppModule {}

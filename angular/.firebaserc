@@ -1,0 +1,11 @@
+{
+  "targets": {
+    "library-management-ef83e": {
+      "hosting": {
+        "angular": [
+          "library-management-ef83e"
+        ]
+      }
+    }
+  }
+}

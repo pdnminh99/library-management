@@ -16,10 +16,14 @@ import { AppRoot } from "./app.component";
 import { AngularFireModule } from "@angular/fire";
 import { AngularFirestoreModule } from "@angular/fire/firestore";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { MatSidenavModule } from "@angular/material/sidenav";
+import { MatListModule } from "@angular/material/list";
 
 import { environment } from "src/environments/environment";
 import { SearchBarComponent } from "./components/search-bar.component";
 import { MainPage } from "./pages/main.page";
+import { NavigationComponent } from './components/navigation-bar.component';
+import { NavigationButtonComponent } from './components/navigation-btn.component';
 
 @NgModule({
   declarations: [
@@ -27,6 +31,8 @@ import { MainPage } from "./pages/main.page";
     LoginComponent,
     LoginCardComponent,
     SearchBarComponent,
+    NavigationComponent,
+    NavigationButtonComponent,
     MainPage,
   ],
   imports: [
@@ -34,11 +40,13 @@ import { MainPage } from "./pages/main.page";
     BrowserAnimationsModule,
     AngularFirestoreModule,
     MatProgressSpinnerModule,
+    MatSidenavModule,
     FormsModule,
     MatFormFieldModule,
     MatIconModule,
     MatButtonModule,
     BrowserModule,
+    MatListModule,
     MatInputModule,
     MatCardModule,
     AppRoutingModule,

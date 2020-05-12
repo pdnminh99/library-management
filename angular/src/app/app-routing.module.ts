@@ -17,7 +17,6 @@ const routes: Routes = [
   },
   {
     path: "main",
-    canActivate: [MainGuard],
     component: MainPage,
   },
 ];

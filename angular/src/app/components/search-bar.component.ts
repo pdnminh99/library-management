@@ -1,15 +1,27 @@
-import { Component, Output, EventEmitter } from "@angular/core";
+import { Component, Output, EventEmitter, Input } from "@angular/core";
 import { SearchService } from "../authentication/search.service";
 
 @Component({
   selector: "search-bar-component",
   template: `
-    <input
+    <span
       id="search-bar"
-      type="text"
-      placeholder="Search"
-      [(ngModel)]="searchService.value"
-    />
+      [ngStyle]="{
+        height: searchBoxHeight,
+        borderRadius: searchBoxBorderRadius
+      }"
+    >
+      <mat-icon matPrefix style="display: table-cell; vertical-align: middle;"
+        >search</mat-icon
+      >
+      <input
+        matInput
+        [ngStyle]="{ width: searchBoxWidth }"
+        type="text"
+        placeholder="Search"
+        [(ngModel)]="value"
+      />
+    </span>
   `,
   styles: [
     `
@@ -18,45 +30,70 @@ import { SearchService } from "../authentication/search.service";
         border-radius: 7px;
         border: none;
         background-color: transparent;
-        height: 50px;
-        width: 600px;
-        padding-left: 20px;
-        font-size: 18px;
+        padding: 0;
+        padding-left: 10px;
+        margin: 1em;
+        display: table;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.54);
         transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
       }
 
-      #search-bar:focus {
+      #search-bar input {
+        display: table-cell;
+        vertical-align: middle;
+        margin-left: 20px;
+        font-size: 18px;
+        height: 100%;
+        border: none;
+        background-color: transparent;
+      }
+
+      #search-bar input:focus {
         outline: none;
       }
 
-      #search-bar::placeholder {
-        text-align: center;
+      #search-bar input::placeholder {
+        text-align: left;
       }
     `,
   ],
 })
 export class SearchBarComponent {
-  // private _value = "";
+  @Input()
+  private height: number = 50;
 
-  // public set value(newValue: string) {
-  //   this.onValueChange.emit(newValue);
-  //   this._value = newValue;
-  // }
+  @Input()
+  private width: number = 300;
 
-  // public get value(): string {
-  //   return this._value;
-  // }
+  @Input()
+  private borderRadius: number = 7;
 
-  // @Output()
-  // private onValueChange = new EventEmitter<string>();
+  public get searchBoxHeight(): string {
+    return `${this.height}px`;
+  }
 
-  // @Output()
-  // private onFocus = new EventEmitter<void>();
+  public get searchBoxWidth(): string {
+    return `${this.width}px`;
+  }
 
-  // onFocusHandler(): void {
-  //   this.onFocus.emit();
-  // }
+  public get searchBoxBorderRadius(): string {
+    return `${this.borderRadius}px`;
+  }
 
-  constructor(public searchService: SearchService) {}
+  @Input('value')
+  private _value: string;
+
+  public get value(): string {
+    return this._value;
+  }
+
+  @Output()
+  private onValueChange = new EventEmitter<string>();
+
+  public set value(newValue: string) {
+    this._value = newValue;
+    this.onValueChange.emit(newValue);
+  }
+
+  constructor() {}
 }

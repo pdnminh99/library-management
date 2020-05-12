@@ -1,5 +1,6 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { AuthenticationService } from "../authentication/authentication.service";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "login-card-component",
@@ -9,7 +10,7 @@ import { AuthenticationService } from "../authentication/authentication.service"
         style="text-align: center; font-weight: bolder; font-size: 20px;"
       >
         <mat-card-title>
-          Library Management App
+          Authentication
         </mat-card-title>
       </mat-card-header>
 
@@ -20,11 +21,12 @@ import { AuthenticationService } from "../authentication/authentication.service"
             <input
               matInput
               name="account"
+              [disabled]="isProcessing"
               [(ngModel)]="account"
               placeholder="Account"
             />
             <button
-              mat-button
+              mat-icon-button
               *ngIf="account.length > 0"
               matSuffix
               mat-icon-button
@@ -41,6 +43,7 @@ import { AuthenticationService } from "../authentication/authentication.service"
             <input
               name="password"
               matInput
+              [disabled]="isProcessing"
               [(ngModel)]="password"
               [type]="hide ? 'password' : 'text'"
             />
@@ -55,12 +58,40 @@ import { AuthenticationService } from "../authentication/authentication.service"
             </button>
           </mat-form-field>
 
-          <button mat-button color="primary" (click)="submit()">Sign In</button>
+          <div style="display: table; width: 100%;">
+            <button
+              mat-button
+              color="primary"
+              (click)="signIn()"
+              class="sign-in-btn"
+            >
+              <mat-spinner *ngIf="isProcessing" [diameter]="20"></mat-spinner>
+              <span *ngIf="!isProcessing">Sign in</span>
+            </button>
+
+            <span
+              style="display: table-cell; text-align: left; vertical-align: middle;"
+            >
+              Or create new here
+            </span>
+          </div>
         </form>
       </mat-card-content>
     </mat-card>
   `,
-  styles: [],
+  styles: [
+    `
+      .sign-in-btn {
+        padding: 0;
+        margin: 0;
+        margin-right: 5px;
+        display: table-cell;
+        vertical-align: middle;
+        text-align: center;
+        height: 40px;
+      }
+    `,
+  ],
 })
 export class LoginCardComponent {
   account = "";
@@ -69,9 +100,19 @@ export class LoginCardComponent {
 
   hide = true;
 
-  constructor(private auth: AuthenticationService) {}
-
-  submit() {
-    this.auth.login(this.account, this.password);
+  public get isProcessing(): boolean {
+    return this.auth.isProcessing;
   }
+
+  constructor(private router: Router, private auth: AuthenticationService) {}
+
+  signIn() {
+    this.auth.signIn(this.account, this.password, () =>
+      this.router.navigate(["main"])
+    );
+  }
+
+  // signUp() {
+  //   this.auth.signUp(this.account, this.password);
+  // }
 }

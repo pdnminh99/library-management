@@ -15,14 +15,25 @@ import { MatInputModule } from "@angular/material/input";
 import { AppRoot } from "./app.component";
 import { AngularFireModule } from "@angular/fire";
 import { AngularFirestoreModule } from "@angular/fire/firestore";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+
 import { environment } from "src/environments/environment";
+import { SearchBarComponent } from "./components/search-bar.component";
+import { MainPage } from "./pages/main.page";
 
 @NgModule({
-  declarations: [AppRoot, LoginComponent, LoginCardComponent],
+  declarations: [
+    AppRoot,
+    LoginComponent,
+    LoginCardComponent,
+    SearchBarComponent,
+    MainPage,
+  ],
   imports: [
     AngularFireModule.initializeApp(environment.firebase),
     BrowserAnimationsModule,
     AngularFirestoreModule,
+    MatProgressSpinnerModule,
     FormsModule,
     MatFormFieldModule,
     MatIconModule,

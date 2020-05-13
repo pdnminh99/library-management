@@ -18,12 +18,15 @@ import { AngularFirestoreModule } from "@angular/fire/firestore";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatSidenavModule } from "@angular/material/sidenav";
 import { MatListModule } from "@angular/material/list";
+import { MatToolbarModule } from "@angular/material/toolbar";
 
 import { environment } from "src/environments/environment";
 import { SearchBarComponent } from "./components/search-bar.component";
 import { MainPage } from "./pages/main.page";
-import { NavigationComponent } from './components/navigation-bar.component';
-import { NavigationButtonComponent } from './components/navigation-btn.component';
+import { NavigationComponent } from "./components/navigation-bar.component";
+import { NavigationButtonComponent } from "./components/navigation-btn.component";
+import { NavigationControlComponent } from "./components/navigation-control.component";
+import { MiniSideNavigationComponent } from './components/mini-sidenav-bar.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +36,9 @@ import { NavigationButtonComponent } from './components/navigation-btn.component
     SearchBarComponent,
     NavigationComponent,
     NavigationButtonComponent,
+    MiniSideNavigationComponent,
     MainPage,
+    NavigationControlComponent,
   ],
   imports: [
     AngularFireModule.initializeApp(environment.firebase),
@@ -46,6 +51,7 @@ import { NavigationButtonComponent } from './components/navigation-btn.component
     MatIconModule,
     MatButtonModule,
     BrowserModule,
+    MatToolbarModule,
     MatListModule,
     MatInputModule,
     MatCardModule,

@@ -4,17 +4,13 @@ import { AuthenticationService } from "../authentication/authentication.service"
 @Component({
   selector: "navigation-component",
   template: `
-    <div style="display: table; width: 100%; background-color: transparent;">
-      <div class="nav-component" style="width: 300px; padding-left: 20px;">
-        <button mat-icon-button (click)="handleMenuButtonClicked()">
-          <mat-icon>menu</mat-icon>
-        </button>
-        <h2
-          style="display: inline-block; height: 100%; vertical-align: middle; padding-left: 10px; margin: 0;"
-        >
-          Dashboard
-        </h2>
-      </div>
+    <div class="nav">
+      <navigation-control-component
+        class="nav-component"
+        title="Dashboard"
+        (onMenuButtonClicked)="handleMenuButtonClicked()"
+      ></navigation-control-component>
+
       <search-bar-component
         class="nav-component"
         [width]="700"
@@ -22,11 +18,11 @@ import { AuthenticationService } from "../authentication/authentication.service"
         [borderRadius]="7"
         (onValueChange)="valueChange($event)"
       ></search-bar-component>
+
       <div class="nav-component">
         <button
           *ngIf="displaySignInButton"
           mat-raised-button
-          style="display: table-cell; vertical-align: middle;"
         >
           Sign in
         </button>
@@ -35,6 +31,12 @@ import { AuthenticationService } from "../authentication/authentication.service"
   `,
   styles: [
     `
+      .nav {
+        display: table;
+        width: 100%;
+        background-color: transparent;
+      }
+
       .nav-component {
         display: table-cell;
         vertical-align: middle;

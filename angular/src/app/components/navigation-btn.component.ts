@@ -1,7 +1,5 @@
 import { Component, Input, Output, EventEmitter } from "@angular/core";
 
-
-
 @Component({
   selector: "navigation-button-component",
   template: `
@@ -9,12 +7,13 @@ import { Component, Input, Output, EventEmitter } from "@angular/core";
       mat-flat-button
       class="nav-btn"
       [ngStyle]="{ fontSize: fontSize }"
+      [ngClass]="{ 'nav-btn-active': isActive }"
       (click)="handleButtonClicked()"
     >
       <mat-icon *ngIf="icon.length > 0">{{ icon }}</mat-icon>
-      <span *ngIf="title.length > 0" style="padding-left: 10px;">{{
-        title
-      }}</span>
+      <span *ngIf="title.length > 0" style="padding-left: 10px;">
+        {{ title }}
+      </span>
     </button>
   `,
   styles: [
@@ -31,10 +30,18 @@ import { Component, Input, Output, EventEmitter } from "@angular/core";
         padding: 10px 0;
         padding-left: 20px;
       }
+
+      .nav-btn-active {
+        background-color: #e3edfd;
+        color: #236ed4;
+      }
     `,
   ],
 })
 export class NavigationButtonComponent {
+  @Input()
+  public isActive: boolean = false;
+
   @Input()
   public icon: string = "";
 

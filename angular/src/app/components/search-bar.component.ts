@@ -18,7 +18,7 @@ import { SearchService } from "../authentication/search.service";
         matInput
         [ngStyle]="{ width: searchBoxWidth }"
         type="text"
-        placeholder="Search"
+        placeholder="Search for books, members & book loan records"
         [(ngModel)]="value"
       />
     </span>

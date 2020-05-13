@@ -7,7 +7,7 @@ import { AuthenticationService } from "../authentication/authentication.service"
     <div class="nav">
       <navigation-control-component
         class="nav-component"
-        title="Dashboard"
+        title="BOOKS"
         (onMenuButtonClicked)="handleMenuButtonClicked()"
       ></navigation-control-component>
 
@@ -39,6 +39,8 @@ import { AuthenticationService } from "../authentication/authentication.service"
 
       .nav-component {
         display: table-cell;
+        margin: 0;
+        padding: 0;
         vertical-align: middle;
       }
     `,

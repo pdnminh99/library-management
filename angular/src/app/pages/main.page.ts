@@ -36,12 +36,18 @@ import { Component } from "@angular/core";
           (onMenuButtonClicked)="sidenav.toggle()"
         ></navigation-component>
 
-        <mat-sidenav-container style="height: 100%; background-color: transparent;">
-          <mat-sidenav mode="side" [opened]="true" style="background-color: transparent; border: none;">
+        <mat-sidenav-container
+          style="height: 100%; background-color: transparent;"
+        >
+          <mat-sidenav
+            mode="side"
+            [opened]="true"
+            style="background-color: transparent; border: none;"
+          >
             <mini-sidenav-component></mini-sidenav-component>
           </mat-sidenav>
-          <mat-sidenav-content>
-            Another Hello
+          <mat-sidenav-content style="padding: 20px;">
+            <content-component></content-component>
           </mat-sidenav-content>
         </mat-sidenav-container>
       </mat-sidenav-content>

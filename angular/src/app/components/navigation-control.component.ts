@@ -11,9 +11,9 @@ import { Component, Input, Output, EventEmitter } from "@angular/core";
       >
         <mat-icon>menu</mat-icon>
       </button>
-      <h1 class="nav-heading-font nav-heading">
+      <h2 class="nav-heading-font nav-heading">
         {{ title }}
-      </h1>
+      </h2>
     </div>
   `,
   styles: [

@@ -4,15 +4,32 @@ import { Component, Input, Output, EventEmitter } from "@angular/core";
   selector: "mini-sidenav-btn-component",
   template: `
     <mat-toolbar-row>
-      <button mat-icon-button (click)="handleButtonClicked()">
+      <button
+        mat-icon-button
+        [ngClass]="{ 'sidenav-btn-active': isActive }"
+        (click)="handleButtonClicked()"
+      >
         <mat-icon>{{ icon }}</mat-icon>
       </button>
     </mat-toolbar-row>
   `,
+  styles: [
+    `
+      .sidenav-btn-active {
+        background-color: #e3edfd;
+        color: #236ed4;
+      }
+
+      button:hover {
+        background-color: #e3edfd;
+        color: #236ed4;
+      }
+    `,
+  ],
 })
 export class MiniSideNavigationButtonComponent {
   @Input()
-  public icon: string = "";
+  public icon: string = "apps";
 
   @Input()
   public isActive: boolean = false;

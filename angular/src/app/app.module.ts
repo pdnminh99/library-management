@@ -36,6 +36,7 @@ import { DashboardPage } from "./pages/dashboard.page";
 import { BookLoansPage } from "./pages/book-loans.page";
 import { AccountPage } from "./pages/account.page";
 import { MembersPage } from "./pages/members.page";
+import { SearchPage } from './pages/search.page';
 
 @NgModule({
   declarations: [
@@ -52,6 +53,7 @@ import { MembersPage } from "./pages/members.page";
     NavigationControlComponent,
     ResourcePage,
     DashboardPage,
+    SearchPage,
     BookLoansPage,
     AccountPage,
     MembersPage,

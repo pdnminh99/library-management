@@ -1,5 +1,7 @@
 import { Component, Output, EventEmitter } from "@angular/core";
 import { AuthenticationService } from "../authentication/authentication.service";
+import { SearchService } from "../authentication/search.service";
+import { isNullOrUndefined } from "util";
 
 @Component({
   selector: "navigation-component",
@@ -23,9 +25,12 @@ import { AuthenticationService } from "../authentication/authentication.service"
         <button
           *ngIf="displaySignInButton"
           mat-raised-button
+          (click)="signIn()"
         >
           Sign in
         </button>
+
+        <img [src]="photoUrl" style="width: 30px;" />
       </div>
     </div>
   `,
@@ -51,14 +56,30 @@ export class NavigationComponent {
   private onMenuButtonClicked = new EventEmitter<void>();
 
   public get displaySignInButton(): boolean {
-    return this.auth.isLoggedIn;
+    return !this.auth.isLoggedIn;
   }
 
-  public valueChange(newValue: string): void {}
+  public get photoUrl(): string {
+    if (isNullOrUndefined(this.auth.currentUser)) {
+      return "";
+    }
+    return this.auth.currentUser.photoURL;
+  }
+
+  public valueChange(newValue: string): void {
+    this.searchService.value = newValue;
+  }
 
   public handleMenuButtonClicked(): void {
     this.onMenuButtonClicked.emit();
   }
 
-  constructor(private auth: AuthenticationService) {}
+  public signIn(): void {
+    this.auth.signIn();
+  }
+
+  constructor(
+    public auth: AuthenticationService,
+    private searchService: SearchService
+  ) {}
 }

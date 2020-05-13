@@ -1,4 +1,5 @@
 import { Component } from "@angular/core";
+import { SearchService } from "../authentication/search.service";
 
 @Component({
   selector: "main-page",
@@ -52,7 +53,8 @@ import { Component } from "@angular/core";
             <mini-sidenav-component></mini-sidenav-component>
           </mat-sidenav>
           <mat-sidenav-content style="padding: 20px;">
-            <router-outlet></router-outlet>
+            <router-outlet *ngIf="!isSearchActive"></router-outlet>
+            <search-page *ngIf="isSearchActive"></search-page>
           </mat-sidenav-content>
         </mat-sidenav-container>
       </mat-sidenav-content>
@@ -83,4 +85,10 @@ import { Component } from "@angular/core";
     `,
   ],
 })
-export class MainPage {}
+export class MainPage {
+  public get isSearchActive(): boolean {
+    return this.searchService.isSearchActive;
+  }
+
+  constructor(private searchService: SearchService) {}
+}

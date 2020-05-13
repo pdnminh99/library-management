@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { AngularFireAuth } from "@angular/fire/auth";
-import { User } from "firebase";
+import { User, auth } from "firebase";
 import { isNullOrUndefined } from "util";
 import { Observable, Subscription } from "rxjs";
 
@@ -12,13 +12,14 @@ export class AuthenticationService {
 
   private userSubscription: Subscription;
 
-  private _currentUser: User;
+  private _currentUser?: User;
 
   public get currentUser(): User {
     return this._currentUser;
   }
 
   public get isLoggedIn(): boolean {
+    console.log(this._currentUser);
     return !isNullOrUndefined(this._currentUser);
   }
 
@@ -30,39 +31,47 @@ export class AuthenticationService {
 
   constructor(private firebaseAuth: AngularFireAuth) {
     this.userObservable = firebaseAuth.user;
-    this.userSubscription = this.userObservable.subscribe({
-      next: (user: User) => {
-        this._currentUser = user;
-      },
-      error: console.log,
-      complete: () => console.log("Completed."),
-    });
+    // this.userSubscription = this.userObservable.subscribe({
+    //   next: (user: User) => {
+    //     this._currentUser = user;
+    //   },
+    //   error: console.log,
+    //   complete: () => console.log("Completed."),
+    // });
   }
 
-  public signIn(
-    email: string,
-    password: string,
-    onSuccess?: (user: User) => void,
-    onError?: (reason: string) => void
-  ): void {
-    this._isProcessing = true;
+  public signIn(): void {
     this.firebaseAuth
-      .signInWithEmailAndPassword(email, password)
+      .signInWithPopup(new auth.GoogleAuthProvider())
       .then((user) => {
-        if (isNullOrUndefined(user.user)) {
-          throw new Error("User not found.");
-        }
-        onSuccess(user.user);
         this._currentUser = user.user;
-        return user.user;
-      })
-      .catch((err) => {
-        onError(err);
-      })
-      .finally(() => {
-        this._isProcessing = false;
       });
   }
+
+  // public signIn(
+  //   email: string,
+  //   password: string,
+  //   onSuccess?: (user: User) => void,
+  //   onError?: (reason: string) => void
+  // ): void {
+  //   this._isProcessing = true;
+  //   this.firebaseAuth
+  //     .signInWithEmailAndPassword(email, password)
+  //     .then((user) => {
+  //       if (isNullOrUndefined(user.user)) {
+  //         throw new Error("User not found.");
+  //       }
+  //       onSuccess(user.user);
+  //       this._currentUser = user.user;
+  //       return user.user;
+  //     })
+  //     .catch((err) => {
+  //       onError(err);
+  //     })
+  //     .finally(() => {
+  //       this._isProcessing = false;
+  //     });
+  // }
 
   // public signUp(email: string, password: string): void {
   //   this.firebaseAuth

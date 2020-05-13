@@ -17,6 +17,6 @@ export class SearchService {
   }
 
   public get isSearchActive(): boolean {
-    return this._value.length > 0;
+    return this.value.trim().length > 0;
   }
 }

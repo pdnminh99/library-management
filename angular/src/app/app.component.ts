@@ -2,8 +2,6 @@ import { Component } from "@angular/core";
 
 @Component({
   selector: "app-root",
-  template: `<router-outlet></router-outlet>`,
+  template: `<main-page></main-page>`,
 })
-export class AppRoot {
-  constructor() {}
-}
+export class AppRoot {}

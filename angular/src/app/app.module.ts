@@ -31,6 +31,11 @@ import { MiniSideNavigationComponent } from "./components/mini-sidenav-bar.compo
 import { ContentComponent } from "./components/content.component";
 import { ContentRowComponent } from "./components/content-row.component";
 import { MiniSideNavigationButtonComponent } from "./components/mini-sidenav-btn.component";
+import { ResourcePage } from "./pages/resources.page";
+import { DashboardPage } from "./pages/dashboard.page";
+import { BookLoansPage } from "./pages/book-loans.page";
+import { AccountPage } from "./pages/account.page";
+import { MembersPage } from "./pages/members.page";
 
 @NgModule({
   declarations: [
@@ -45,6 +50,11 @@ import { MiniSideNavigationButtonComponent } from "./components/mini-sidenav-btn
     ContentComponent,
     MainPage,
     NavigationControlComponent,
+    ResourcePage,
+    DashboardPage,
+    BookLoansPage,
+    AccountPage,
+    MembersPage,
     ContentRowComponent,
   ],
   imports: [

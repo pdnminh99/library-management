@@ -10,23 +10,28 @@ import { Component } from "@angular/core";
         </h1>
         <hr />
         <navigation-button-component
+          [routerLink]="['dashboard']"
           icon="apps"
           title="Dashboard"
-          [isActive]="true"
         ></navigation-button-component>
         <navigation-button-component
+          [routerLink]="['resources']"
           icon="menu_book"
-          title="Books"
+          [isActive]="true"
+          title="Resources"
         ></navigation-button-component>
         <navigation-button-component
+          [routerLink]="['members']"
           icon="people"
           title="Members"
         ></navigation-button-component>
         <navigation-button-component
+          [routerLink]="['loans']"
           icon="assignment"
           title="Book Loans"
         ></navigation-button-component>
         <navigation-button-component
+          [routerLink]="['account']"
           icon="person"
           title="Account"
         ></navigation-button-component>
@@ -47,7 +52,7 @@ import { Component } from "@angular/core";
             <mini-sidenav-component></mini-sidenav-component>
           </mat-sidenav>
           <mat-sidenav-content style="padding: 20px;">
-            <content-component></content-component>
+            <router-outlet></router-outlet>
           </mat-sidenav-content>
         </mat-sidenav-container>
       </mat-sidenav-content>

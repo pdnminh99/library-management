@@ -1,4 +1,6 @@
 import { Component } from "@angular/core";
+import { Book } from "../models/book";
+import { isNullOrUndefined } from "util";
 
 @Component({
   selector: "content-component",
@@ -10,51 +12,24 @@ import { Component } from "@angular/core";
         style="background-color: transparent; border: none; width: 300px;"
       >
         <mat-form-field style="padding: 0; width: 100%;" appearance="fill">
-          <input matInput type="text" placeholder="Search" />
+          <input
+            matInput
+            type="text"
+            placeholder="Search"
+            [(ngModel)]="searchValue"
+          />
           <button matSuffix mat-icon-button>
             <mat-icon>filter_list</mat-icon>
           </button>
         </mat-form-field>
         <div style="height: 500px; overflow-y: auto;">
           <content-row-component
-            [isActive]="true"
-            title="Harry Potter and the Sorcerer Stone"
-            description="Lorem Ipsum"
-          ></content-row-component>
-
-          <content-row-component
-            title="Harry Potter and the Chamber of Secret"
-            description="Lorem Ipsum"
-          ></content-row-component>
-
-          <content-row-component
-            title="Harry Potter and the Prisoner of Azkaban"
-            description="Lorem Ipsum"
-          ></content-row-component>
-
-          <content-row-component
-            title="Harry Potter and the Goblet of Fire"
-            description="Lorem Ipsum"
-          ></content-row-component>
-
-          <content-row-component
-            title="Harry Potter and the Order of Pheonix"
-            description="Lorem Ipsum"
-          ></content-row-component>
-
-          <content-row-component
-            title="Harry Potter and the Half Blood Prince"
-            description="Lorem Ipsum"
-          ></content-row-component>
-
-          <content-row-component
-            title="Harry Potter and the Deathly Hallow"
-            description="Lorem Ipsum"
-          ></content-row-component>
-
-          <content-row-component
-            title="Harry Potter and the Deathly Hallow"
-            description="Lorem Ipsum"
+            *ngFor="let book of books"
+            [isActive]="
+              book.resourceId !== null && book.resourceId == currentActiveId
+            "
+            [title]="book.title"
+            [description]="book.description"
           ></content-row-component>
         </div>
 
@@ -86,4 +61,74 @@ import { Component } from "@angular/core";
   `,
   styles: [``],
 })
-export class ContentComponent {}
+export class ContentComponent {
+  public searchValue: string = "";
+
+  public currentActiveId: number = 0;
+
+  public get books(): Book[] {
+    if (this.searchValue.trim().length == 0) {
+      return this._books;
+    }
+    return this._books.filter(
+      (book) =>
+        (!isNullOrUndefined(book.title) &&
+          book.title.includes(this.searchValue)) ||
+        (!isNullOrUndefined(book.description) &&
+          book.description.includes(this.searchValue))
+    );
+    // let results: Book[] = [];
+    // for (var book of this._books) {
+    //   if (
+    //     !isNullOrUndefined(book.title) &&
+    //     book.title.includes(this.searchValue)
+    //   ) {
+    //     results.push(book);
+    //   }
+    // }
+    // return results;
+  }
+
+  private _books: Book[] = <Book[]>[
+    {
+      resourceId: 0,
+      title: "Harry Potter and the Sorcerer Stone",
+      description: "Lorem Ipsum",
+    },
+    {
+      resourceId: 1,
+      title: "Harry Potter and the Chamber of Secret",
+      description: "Lorem Ipsum",
+    },
+    {
+      resourceId: 2,
+      title: "Harry Potter and the Prisoner of Azkaban",
+      description: "Lorem Ipsum",
+    },
+    {
+      resourceId: 3,
+      title: "Harry Potter and the Goblet of Fire",
+      description: "Lorem Ipsum",
+    },
+    {
+      resourceId: 4,
+      title: "Harry Potter and the Order of Pheonix",
+      description: "Lorem Ipsum",
+    },
+    {
+      resourceId: 5,
+      title: "Harry Potter and the Half Blood Prince",
+      description: "Lorem Ipsum",
+    },
+    {
+      resourceId: 6,
+      title: "Harry Potter and the Deathly Hallow part One",
+      description: "Lorem Ipsum",
+    },
+    {
+      resourceId: 7,
+      title: "Harry Potter and the Deathly Hallow part Two",
+      description: "Lorem Ipsum",
+    },
+  ];
+}

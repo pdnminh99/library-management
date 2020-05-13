@@ -7,7 +7,7 @@ import { AuthenticationService } from "../authentication/authentication.service"
     <div class="nav">
       <navigation-control-component
         class="nav-component"
-        title="BOOKS"
+        title="Athene"
         (onMenuButtonClicked)="handleMenuButtonClicked()"
       ></navigation-control-component>
 

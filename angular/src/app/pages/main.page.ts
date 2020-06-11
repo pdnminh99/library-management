@@ -1,43 +1,27 @@
-import { Component } from "@angular/core";
-import { SearchService } from "../authentication/search.service";
+import {Component} from '@angular/core';
+import {SearchService} from '../authentication/search.service';
+import {NavigationService} from '../authentication/navigation.service';
 
 @Component({
-  selector: "main-page",
+  // tslint:disable-next-line:component-selector
+  selector: 'main-page',
   template: `
     <mat-sidenav-container class="container">
       <mat-sidenav #sidenav mode="over" class="sidenav">
         <h1 class="sivenav-title">
           Navigation
         </h1>
-        <hr />
+        <hr/>
+
         <navigation-button-component
-          [routerLink]="['dashboard']"
-          icon="apps"
-          title="Dashboard"
-        ></navigation-button-component>
-        <navigation-button-component
-          [routerLink]="['resources']"
-          icon="menu_book"
-          [isActive]="true"
-          title="Resources"
-        ></navigation-button-component>
-        <navigation-button-component
-          [routerLink]="['members']"
-          icon="people"
-          title="Members"
-        ></navigation-button-component>
-        <navigation-button-component
-          [routerLink]="['loans']"
-          icon="assignment"
-          title="Book Loans"
-        ></navigation-button-component>
-        <navigation-button-component
-          [routerLink]="['account']"
-          icon="person"
-          title="Account"
+          *ngFor="let nav of navigationService.sideNavButtons"
+          (click)="navigationService.navigate(nav)"
+          [icon]="nav.icon"
+          [isActive]="nav.isActive"
+          [title]="nav.navigation"
         ></navigation-button-component>
       </mat-sidenav>
-      <mat-sidenav-content>
+      <mat-sidenav-content style="display: flex; flex-flow: column; justify-content: flex-start;">
         <navigation-component
           (onMenuButtonClicked)="sidenav.toggle()"
         ></navigation-component>
@@ -46,6 +30,7 @@ import { SearchService } from "../authentication/search.service";
           style="height: 100%; background-color: transparent;"
         >
           <mat-sidenav
+            id="mini-sidenav"
             mode="side"
             [opened]="true"
             style="background-color: transparent; border: none;"
@@ -61,7 +46,7 @@ import { SearchService } from "../authentication/search.service";
     </mat-sidenav-container>
   `,
   styles: [
-    `
+      `
       .container {
         height: 100%;
         width: 100%;
@@ -80,15 +65,23 @@ import { SearchService } from "../authentication/search.service";
         margin-left: 15px;
         margin-bottom: 20px;
         padding-top: 30px;
-        padding-left: 0px;
+        padding-left: 0;
+      }
+
+      @media screen and (max-width: 1024px) {
+        #mini-sidenav {
+          display: none;
+        }
       }
     `,
   ],
 })
+// tslint:disable-next-line:component-class-suffix
 export class MainPage {
   public get isSearchActive(): boolean {
     return this.searchService.isSearchActive;
   }
 
-  constructor(private searchService: SearchService) {}
+  constructor(private searchService: SearchService, public navigationService: NavigationService) {
+  }
 }

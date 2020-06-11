@@ -62,7 +62,6 @@ import { Router } from "@angular/router";
             <button
               mat-button
               color="primary"
-              (click)="signIn()"
               class="sign-in-btn"
             >
               <mat-spinner *ngIf="isProcessing" [diameter]="20"></mat-spinner>
@@ -105,12 +104,6 @@ export class LoginCardComponent {
   }
 
   constructor(private router: Router, private auth: AuthenticationService) {}
-
-  signIn() {
-    this.auth.signIn(this.account, this.password, () =>
-      this.router.navigate(["main"])
-    );
-  }
 
   // signUp() {
   //   this.auth.signUp(this.account, this.password);

@@ -1,7 +1,8 @@
-import { Component, Input, Output, EventEmitter } from "@angular/core";
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
-  selector: "navigation-button-component",
+  // tslint:disable-next-line:component-selector
+  selector: 'navigation-button-component',
   template: `
     <button
       mat-flat-button
@@ -19,16 +20,12 @@ import { Component, Input, Output, EventEmitter } from "@angular/core";
   styles: [
     `
       .nav-btn {
-        border-bottom-left-radius: 0;
-        border-top-left-radius: 0;
-        border-top-right-radius: 50px;
-        border-bottom-right-radius: 50px;
+        border-radius: 0 50px 50px 0;
         display: block;
         width: 300px;
         text-align: left;
         margin-right: 20px;
-        padding: 10px 0;
-        padding-left: 20px;
+        padding: 10px 0 10px 20px;
       }
 
       .nav-btn-active {
@@ -40,16 +37,16 @@ import { Component, Input, Output, EventEmitter } from "@angular/core";
 })
 export class NavigationButtonComponent {
   @Input()
-  public isActive: boolean = false;
+  public isActive = false;
 
   @Input()
-  public icon: string = "";
+  public icon = '';
 
   @Input()
-  public title: string = "";
+  public title = '';
 
-  @Input("fontSize")
-  private _fontSize: number = 24;
+  // tslint:disable-next-line:variable-name no-input-rename
+  @Input('fontSize') private _fontSize = 24;
 
   public get fontSize(): string {
     return `${this._fontSize}px`;

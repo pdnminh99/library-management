@@ -1,11 +1,12 @@
-import { Component, Input, Output, EventEmitter } from "@angular/core";
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
-  selector: "navigation-control-component",
+  // tslint:disable-next-line:component-selector
+  selector: 'navigation-control-component',
   template: `
-    <div style="padding-left: 20px;">
+    <div style="padding-left: 20px; display: flex; justify-content: flex-start; align-items: center;">
       <button
-        class="nav-heading-font "
+        class="nav-heading-font"
         mat-icon-button
         (click)="handleMenuButtonClicked()"
       >
@@ -38,8 +39,9 @@ import { Component, Input, Output, EventEmitter } from "@angular/core";
 })
 export class NavigationControlComponent {
   @Input()
-  public title: string = "";
+  public title = '';
 
+  // tslint:disable-next-line:no-output-on-prefix
   @Output()
   public onMenuButtonClicked = new EventEmitter<void>();
 

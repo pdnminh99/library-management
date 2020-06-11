@@ -19,7 +19,6 @@ export class AuthenticationService {
   }
 
   public get isLoggedIn(): boolean {
-    console.log(this._currentUser);
     return !isNullOrUndefined(this._currentUser);
   }
 
@@ -31,13 +30,9 @@ export class AuthenticationService {
 
   constructor(private firebaseAuth: AngularFireAuth) {
     this.userObservable = firebaseAuth.user;
-    // this.userSubscription = this.userObservable.subscribe({
-    //   next: (user: User) => {
-    //     this._currentUser = user;
-    //   },
-    //   error: console.log,
-    //   complete: () => console.log("Completed."),
-    // });
+    this.userObservable.subscribe((user) => {
+      this._currentUser = user;
+    });
   }
 
   public signIn(): void {
@@ -46,6 +41,10 @@ export class AuthenticationService {
       .then((user) => {
         this._currentUser = user.user;
       });
+  }
+
+  signOut() {
+    this.firebaseAuth.signOut().then(() => (this._currentUser = null));
   }
 
   // public signIn(

@@ -1,7 +1,8 @@
-import { Component, Output, EventEmitter, Input } from "@angular/core";
+import { Component, Output, EventEmitter, Input } from '@angular/core';
 
 @Component({
-  selector: "content-row-component",
+  // tslint:disable-next-line:component-selector
+  selector: 'content-row-component',
   template: `
     <button
       mat-flat-button
@@ -10,7 +11,7 @@ import { Component, Output, EventEmitter, Input } from "@angular/core";
       (click)="handleRowClicked()"
     >
       <h5 style="font-weight: bold; font-size: 14px;">{{ title }}</h5>
-      <p style="font-size: 14px;">{{ description }}</p>
+      <p style="font-size: 13px; line-height: 20px;">{{ description }}</p>
     </button>
   `,
   styles: [
@@ -27,10 +28,9 @@ import { Component, Output, EventEmitter, Input } from "@angular/core";
       }
 
       .content-card {
-        padding: 3px 5px;
-        border-radius: 5px;
+        padding: 5px 10px;
         width: 100%;
-        margin: 3px 0;
+        border-radius: 3px;
       }
 
       .content-card:hover {
@@ -41,28 +41,30 @@ import { Component, Output, EventEmitter, Input } from "@angular/core";
   ],
 })
 export class ContentRowComponent {
-  @Input("title")
-  private _title: string = "";
+  // tslint:disable-next-line:no-input-rename
+  @Input('title')
+  // tslint:disable-next-line:variable-name
+  private _title = '';
 
   public get title(): string {
     if (this._title.length > 40) {
-      return this._title.substr(0, 40) + "...";
+      return this._title.substr(0, 40) + '...';
     }
     return this._title;
   }
 
-  @Input("description")
-  private _description: string = "";
+  @Input('description')
+  private _description = '';
 
   public get description(): string {
     if (this._description.length > 40) {
-      return this._description.substr(0, 40) + "...";
+      return this._description.substr(0, 40) + '...';
     }
     return this._description;
   }
 
   @Input()
-  public isActive: boolean = false;
+  public isActive = false;
 
   @Output()
   private onRowClicked = new EventEmitter<void>();

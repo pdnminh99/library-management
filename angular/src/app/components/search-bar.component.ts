@@ -1,8 +1,9 @@
-import { Component, Output, EventEmitter, Input } from "@angular/core";
-import { SearchService } from "../authentication/search.service";
+import {Component, Output, EventEmitter, Input} from '@angular/core';
+import {SearchService} from '../authentication/search.service';
 
 @Component({
-  selector: "search-bar-component",
+  // tslint:disable-next-line:component-selector
+  selector: 'search-bar-component',
   template: `
     <span
       id="search-bar"
@@ -11,35 +12,31 @@ import { SearchService } from "../authentication/search.service";
         borderRadius: searchBoxBorderRadius
       }"
     >
-      <mat-icon matPrefix style="display: table-cell; vertical-align: middle;"
-        >search</mat-icon
-      >
+      <mat-icon matPrefix>search</mat-icon>
       <input
         matInput
-        [ngStyle]="{ width: searchBoxWidth }"
         type="text"
-        placeholder="Search for books, members & book loan records"
+        placeholder="Search ..."
         [(ngModel)]="value"
       />
     </span>
   `,
   styles: [
-    `
+      `
       #search-bar {
-        background: #fff;
         border-radius: 7px;
         border: none;
         background-color: transparent;
-        padding: 0;
-        padding-left: 10px;
-        margin: 1em;
-        display: table;
+        padding: 0 0 0 10px;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.54);
         transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
       }
 
       #search-bar input {
-        display: table-cell;
+        padding-right: 5px;
         vertical-align: middle;
         margin-left: 20px;
         font-size: 18px;
@@ -60,13 +57,13 @@ import { SearchService } from "../authentication/search.service";
 })
 export class SearchBarComponent {
   @Input()
-  private height: number = 50;
+  private height = 50;
 
   @Input()
-  private width: number = 300;
+  private width = 300;
 
   @Input()
-  private borderRadius: number = 7;
+  private borderRadius = 7;
 
   public get searchBoxHeight(): string {
     return `${this.height}px`;
@@ -95,5 +92,6 @@ export class SearchBarComponent {
     this.onValueChange.emit(newValue);
   }
 
-  constructor() {}
+  constructor() {
+  }
 }

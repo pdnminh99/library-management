@@ -1,11 +1,12 @@
-import {Component} from '@angular/core';
-import {Book} from '../models/book';
-import {isNullOrUndefined} from 'util';
-import {BookService} from '../authentication/book.service';
+import { Component } from "@angular/core";
+import { isNullOrUndefined } from "util";
+import { BookService } from "../authentication/book.service";
+import { BasicBook } from "../models/Model";
+import { Router } from "@angular/router";
 
 @Component({
   // tslint:disable-next-line:component-selector
-  selector: 'content-component',
+  selector: "content-component",
   template: `
     <div style="height: 100%; display: flex;">
       <div id="list-contents">
@@ -21,15 +22,16 @@ import {BookService} from '../authentication/book.service';
           </button>
         </mat-form-field>
 
-        <div style="overflow-y: auto; flex: 4; display: flex; flex-direction: column; align-items: stretch;">
+        <div
+          style="overflow-y: auto; flex: 4; display: flex; flex-direction: column; align-items: stretch;"
+        >
           <content-row-component
             style="margin: 2px 0;"
             *ngFor="let book of books"
-            [isActive]="
-              book.resourceId !== null && book.resourceId == currentActiveId
-            "
+            [isActive]="false"
             [title]="book.title"
-            [description]="book.description"
+            [description]="book.author"
+            (onRowClicked)="handleBookChoose(book.bookId)"
           ></content-row-component>
         </div>
 
@@ -45,45 +47,46 @@ import {BookService} from '../authentication/book.service';
       </div>
     </div>
   `,
-  styles: [`
-    #list-contents {
-      flex: 1;
-      background-color: transparent;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      align-items: stretch;
-      border: none;
-    }
-
-    @media screen and (max-width: 900px) {
+  styles: [
+    `
       #list-contents {
-        display: none;
+        flex: 1;
+        background-color: transparent;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: stretch;
+        border: none;
       }
-    }
 
-  `],
+      @media screen and (max-width: 900px) {
+        #list-contents {
+          display: none;
+        }
+      }
+    `,
+  ],
 })
 export class ContentComponent {
-  public searchValue = '';
+  public searchValue = "";
 
   public currentActiveId = 0;
 
-  constructor(public bookService: BookService) {
+  constructor(public bookService: BookService, private router: Router) {}
+
+  public handleBookChoose(bookId: string) {
+    this.bookService.getBook(bookId);
+    this.router.navigateByUrl(`resources/${bookId}`);
   }
 
-
-  public get books(): Book[] {
+  public get books(): BasicBook[] {
     // tslint:disable-next-line:triple-equals
     if (this.searchValue.trim().length == 0) {
       return this.bookService.books;
     }
     return this.bookService.books.filter(
       (book) =>
-        (!isNullOrUndefined(book.title) &&
-          book.title.includes(this.searchValue)) ||
-        (!isNullOrUndefined(book.description) &&
-          book.description.includes(this.searchValue))
+        !isNullOrUndefined(book.title) && book.title.includes(this.searchValue)
     );
   }
 }

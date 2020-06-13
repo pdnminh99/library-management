@@ -41,6 +41,7 @@ import { SearchPage } from './pages/search.page';
 import { CreateResourceFormComponent } from './components/create-resource-form.component';
 import {ToolbarComponent} from './components/toolbar.component';
 import {ViewResourceComponent} from './components/view-resource.component';
+import {HttpClientModule} from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -84,6 +85,7 @@ import {ViewResourceComponent} from './components/view-resource.component';
     MatCardModule,
     MatMenuModule,
     AppRoutingModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppRoot],

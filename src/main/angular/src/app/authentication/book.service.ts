@@ -1,42 +1,54 @@
-import {Injectable} from '@angular/core';
-import {Book} from '../models/Book';
+import { Injectable } from "@angular/core";
+import { BasicBook, Book } from "../models/Model";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { environment } from "../../environments/environment";
+import { Observable } from "rxjs";
 
-
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: "root" })
 export class BookService {
+  public books: BasicBook[] = [];
 
-  public books: Book[] = [{
-    resourceId: 0,
-    title: 'Harry Potter and the Sorcerer Stone',
-    description: 'Lorem Ipsum',
-  }, {
-    resourceId: 1,
-    title: 'Harry Potter and the Chamber of Secret',
-    description: 'Lorem Ipsum',
-  }, {
-    resourceId: 2,
-    title: 'Harry Potter and the Prisoner of Azkaban',
-    description: 'Lorem Ipsum',
-  }, {
-    resourceId: 3,
-    title: 'Harry Potter and the Goblet of Fire',
-    description: 'Lorem Ipsum',
-  }, {
-    resourceId: 4,
-    title: 'Harry Potter and the Order of Pheonix',
-    description: 'Lorem Ipsum',
-  }, {
-    resourceId: 5,
-    title: 'Harry Potter and the Half Blood Prince',
-    description: 'Lorem Ipsum',
-  }, {
-    resourceId: 6,
-    title: 'Harry Potter and the Deathly Hallow part One',
-    description: 'Lorem Ipsum',
-  }, {
-    resourceId: 7,
-    title: 'Harry Potter and the Deathly Hallow part Two',
-    description: 'Lorem Ipsum',
-  }] as Book[];
+  public book: Book;
 
+  public get isBookActive(): boolean {
+    return this.book !== undefined;
+  }
+
+  public isProcessing = false;
+
+  private corsHeaders = new HttpHeaders({
+    "Content-Type": "application/json",
+    Accept: "application/json",
+    "Access-Control-Allow-Origin": "http://localhost:8080/api/v1/book",
+  });
+
+  constructor(private http: HttpClient) {
+    this.isProcessing = true;
+    http
+      .get<BasicBook[]>(`${environment.serverURI}/book`, {
+        headers: this.corsHeaders,
+      })
+      .subscribe({
+        next: (value) => {
+          this.books = value;
+          this.isProcessing = false;
+        },
+        complete() {
+          console.log("Completed sync");
+        },
+      });
+  }
+
+  public getBook(bookId: string) {
+    this.isProcessing = true;
+    this.http
+      .get<Book>(`${environment.serverURI}/book/${bookId}`, {
+        headers: this.corsHeaders,
+      })
+      .subscribe((value) => {
+        this.book = value;
+        console.log(value);
+        this.isProcessing = false;
+      });
+  }
 }

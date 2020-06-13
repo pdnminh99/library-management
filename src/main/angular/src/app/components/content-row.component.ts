@@ -1,8 +1,8 @@
-import { Component, Output, EventEmitter, Input } from '@angular/core';
+import { Component, Output, EventEmitter, Input } from "@angular/core";
 
 @Component({
   // tslint:disable-next-line:component-selector
-  selector: 'content-row-component',
+  selector: "content-row-component",
   template: `
     <button
       mat-flat-button
@@ -10,8 +10,12 @@ import { Component, Output, EventEmitter, Input } from '@angular/core';
       [ngClass]="{ 'content-card-active': isActive }"
       (click)="handleRowClicked()"
     >
-      <h5 style="font-weight: bold; font-size: 14px;">{{ title }}</h5>
-      <p style="font-size: 13px; line-height: 20px;">{{ description }}</p>
+      <h5 style="font-weight: bold; font-size: 14px;">
+        {{ title || "Unknown" }}
+      </h5>
+      <p style="font-size: 13px; line-height: 20px;">
+        {{ description || "No description" }}
+      </p>
     </button>
   `,
   styles: [
@@ -42,23 +46,23 @@ import { Component, Output, EventEmitter, Input } from '@angular/core';
 })
 export class ContentRowComponent {
   // tslint:disable-next-line:no-input-rename
-  @Input('title')
+  @Input("title")
   // tslint:disable-next-line:variable-name
-  private _title = '';
+  private _title = "";
 
   public get title(): string {
     if (this._title.length > 40) {
-      return this._title.substr(0, 40) + '...';
+      return this._title.substr(0, 40) + "...";
     }
     return this._title;
   }
 
-  @Input('description')
-  private _description = '';
+  @Input("description")
+  private _description = "";
 
   public get description(): string {
-    if (this._description.length > 40) {
-      return this._description.substr(0, 40) + '...';
+    if (this._description !== null && this._description.length > 40) {
+      return this._description.substr(0, 40) + "...";
     }
     return this._description;
   }

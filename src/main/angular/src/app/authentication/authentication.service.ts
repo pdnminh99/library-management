@@ -3,6 +3,7 @@ import { AngularFireAuth } from "@angular/fire/auth";
 import { User, auth } from "firebase";
 import { isNullOrUndefined } from "util";
 import { Observable, Subscription } from "rxjs";
+import { AngularFirestore } from "@angular/fire/firestore";
 
 @Injectable({
   providedIn: "root",
@@ -28,7 +29,10 @@ export class AuthenticationService {
     return this._isProcessing;
   }
 
-  constructor(private firebaseAuth: AngularFireAuth) {
+  constructor(
+    private firebaseAuth: AngularFireAuth,
+    private firestore: AngularFirestore
+  ) {
     this.userObservable = firebaseAuth.user;
     this.userObservable.subscribe((user) => {
       this._currentUser = user;

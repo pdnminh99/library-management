@@ -73,4 +73,13 @@ public class FirebaseConfig {
                 .map(db -> db.collection(isDeploymentEnvironment ? "metadata" : "metadata_dev"))
                 .orElseThrow(Exception::new);
     }
+
+    @Bean("usersCollection")
+    @DependsOn("firestore")
+    @Scope("singleton")
+    public CollectionReference getUsersCollection() throws Exception {
+        return Optional.ofNullable(firestore)
+                .map(db -> db.collection(isDeploymentEnvironment ? "users" : "users"))
+                .orElseThrow(Exception::new);
+    }
 }

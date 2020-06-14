@@ -1,4 +1,5 @@
-
+import Timestamp = firebase.firestore.Timestamp;
+import * as firebase from 'firebase';
 
 export interface SideNavigation {
   id: number;
@@ -19,13 +20,23 @@ export interface Book extends BasicBook {
   publisher: string;
   yearOfPublishing: number;
   count: number;
-  photoUrl: string;
+  photoURL: string;
+  createdAt: number;
   creator: BasicUser;
 }
 
 export interface BasicUser {
   userId: string;
   displayName: string;
-  photoUrl: string;
+  photoURL: string;
   email: string;
+  phoneNumber: string;
+  type: UserType;
+  address: string;
+  citizenId: string;
+  createdAt: Timestamp;
+}
+
+export enum UserType {
+  GUEST = 'GUEST', ADMIN = 'ADMIN', MEMBER = 'MEMBER'
 }

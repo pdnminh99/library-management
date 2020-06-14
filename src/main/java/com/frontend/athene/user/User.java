@@ -1,20 +1,18 @@
 package com.frontend.athene.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.google.cloud.firestore.annotation.DocumentId;
 import com.google.cloud.firestore.annotation.Exclude;
 import com.google.firebase.database.annotations.NotNull;
 
 public class User {
 
-    @DocumentId
     private String userId;
 
     private String displayName;
 
     private String email;
 
-    private String photoUrl;
+    private String photoURL;
 
     @Exclude
     @JsonIgnore
@@ -25,12 +23,12 @@ public class User {
     public User(String userId,
                 String displayName,
                 String email,
-                String photoUrl,
+                String photoURL,
                 UserType type) {
         this.userId = userId;
         this.displayName = displayName;
         this.email = email;
-        this.photoUrl = photoUrl;
+        this.photoURL = photoURL;
         this.type = type;
     }
 
@@ -64,6 +62,7 @@ public class User {
         return type;
     }
 
+    @Exclude
     public void setType(UserType type) {
         this.type = type;
     }
@@ -74,12 +73,12 @@ public class User {
     }
 
     @NotNull
-    public String getPhotoUrl() {
-        return photoUrl;
+    public String getPhotoURL() {
+        return photoURL;
     }
 
     @NotNull
-    public void setPhotoUrl(String photoUrl) {
-        this.photoUrl = photoUrl;
+    public void setPhotoURL(String photoURL) {
+        this.photoURL = photoURL;
     }
 }

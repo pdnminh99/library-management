@@ -1,7 +1,8 @@
-import {Component, Output, EventEmitter} from '@angular/core';
+import {Component, EventEmitter, Output} from '@angular/core';
 import {AuthenticationService} from '../authentication/authentication.service';
 import {SearchService} from '../authentication/search.service';
 import {isNullOrUndefined} from 'util';
+import {UserType} from '../models/Model';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -20,7 +21,8 @@ import {isNullOrUndefined} from 'util';
         (onValueChange)="valueChange($event)"
       ></search-bar-component>
 
-      <div style="flex: 1; text-align: right;">
+      <div
+        style="flex: 1; margin-right: 10px; display: flex; justify-content: flex-end; align-items: center;">
         <button
           *ngIf="displaySignInButton"
           mat-raised-button
@@ -29,28 +31,36 @@ import {isNullOrUndefined} from 'util';
           Sign in
         </button>
 
+        <mat-chip-list style="margin-right: 5px;">
+          <mat-chip *ngIf="isMember">Member</mat-chip>
+          <mat-chip *ngIf="isAdmin" color="warn" selected>Admin</mat-chip>
+        </mat-chip-list>
         <button *ngIf="!displaySignInButton" mat-icon-button color="primary" [matMenuTriggerFor]="menu">
           <img
             [src]="photoUrl"
-            style="width: 40px; border-radius: 50px;">
+            [alt]="auth.currentUser.displayName"
+            style="width: 40px; border-radius: 50px;"
+          >
         </button>
       </div>
 
       <mat-menu #menu="matMenu">
-        <div style="font-weight: bolder; font-size: 20px;">
-          {{ auth?.currentUser?.displayName }}
+        <div style="padding: 10px; text-align: center;">
+          <img *ngIf="photoUrl !== undefined" style="width: 50%; border-radius: 100px; margin-bottom: 5px;"
+               [src]="photoUrl"
+               [alt]="auth.currentUser?.displayName">
+          <div style="font-weight: bolder; font-size: 20px;">{{ auth?.currentUser?.displayName }}</div>
+          <div style="font-size: 14px;">
+            {{ auth?.currentUser?.email }}
+          </div>
         </div>
-        <div style="font-size: 14px;">
-          {{ auth?.currentUser?.email }}
-        </div>
-        <button mat-menu-item style="background-color: blue; color: #fff;">
+
+        <hr/>
+
+        <button routerLink="account" style="text-align: center" mat-menu-item>
           Account
         </button>
-        <button
-          (click)="signOut()"
-          mat-menu-item
-          style="background-color: red; color: #fff;"
-        >
+        <button style="text-align: center;" (click)="signOut()" mat-menu-item>
           Sign Out
         </button>
       </mat-menu>
@@ -58,6 +68,15 @@ import {isNullOrUndefined} from 'util';
   `,
   styles: [
       `
+      #sign-out-mini-btn {
+        background-color: #e5a3a3;
+      }
+
+      ::ng-deep .mat-menu-panel {
+        margin-top: 10px;
+        padding: 0;
+      }
+
       #search-bar {
         flex: 2;
       }
@@ -85,6 +104,14 @@ export class NavigationComponent {
 
   public get displaySignInButton(): boolean {
     return !this.auth.isLoggedIn;
+  }
+
+  public get isMember(): boolean {
+    return this.auth.currentUser?.type === UserType.MEMBER;
+  }
+
+  public get isAdmin(): boolean {
+    return this.auth.currentUser?.type === UserType.ADMIN;
   }
 
   public get photoUrl(): string {

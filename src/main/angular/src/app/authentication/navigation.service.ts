@@ -1,12 +1,14 @@
 import {Injectable} from '@angular/core';
-import {SideNavigation} from '../models/Model';
+import {SideNavigation, UserType} from '../models/Model';
 import {ActivatedRoute, Router} from '@angular/router';
+import {AuthenticationService} from './authentication.service';
 
 
 @Injectable({providedIn: 'root'})
 export class NavigationService {
 
-  public sideNavButtons: SideNavigation[] = [{
+  // tslint:disable-next-line:variable-name
+  public _sideNavButtons: SideNavigation[] = [{
     id: 0,
     navigation: 'dashboard',
     icon: 'apps',
@@ -33,7 +35,41 @@ export class NavigationService {
     isActive: false
   }];
 
-  constructor(public router: Router) {
+  public get sideNavButtons(): SideNavigation[] {
+    if (this.auth.currentUser === undefined) {
+      return [{
+        id: 0,
+        navigation: 'dashboard',
+        icon: 'apps',
+        isActive: false
+      }, {
+        id: 1,
+        navigation: 'account',
+        icon: 'person',
+        isActive: false
+      }];
+    }
+    switch (this.auth.currentUser.type) {
+      case UserType.ADMIN:
+        return this._sideNavButtons;
+      case UserType.MEMBER:
+      case UserType.GUEST:
+      default:
+        return [{
+          id: 0,
+          navigation: 'dashboard',
+          icon: 'apps',
+          isActive: false
+        }, {
+          id: 1,
+          navigation: 'account',
+          icon: 'person',
+          isActive: false
+        }];
+    }
+  }
+
+  constructor(public auth: AuthenticationService, public router: Router) {
   }
 
   public navigate(navigation: SideNavigation) {

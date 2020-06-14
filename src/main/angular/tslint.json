@@ -1,6 +1,7 @@
 {
   "extends": "tslint:recommended",
   "rules": {
+    "semicolon": false,
     "array-type": false,
     "arrow-parens": false,
     "deprecation": {
@@ -10,7 +11,7 @@
     "contextual-lifecycle": true,
     "directive-class-suffix": true,
     "directive-selector": [
-      true,
+      false,
       "attribute",
       "app",
       "camelCase"
@@ -28,7 +29,7 @@
     "interface-name": false,
     "max-classes-per-file": false,
     "max-line-length": [
-      true,
+      false,
       140
     ],
     "member-access": false,
@@ -68,8 +69,8 @@
     "object-literal-sort-keys": false,
     "ordered-imports": false,
     "quotemark": [
-      true,
-      "single"
+      false,
+      "double"
     ],
     "trailing-comma": false,
     "no-conflicting-lifecycle": true,

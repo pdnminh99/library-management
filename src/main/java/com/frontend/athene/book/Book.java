@@ -2,31 +2,25 @@ package com.frontend.athene.book;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.frontend.athene.user.User;
 import com.google.cloud.Timestamp;
 import com.google.cloud.firestore.annotation.Exclude;
 import com.google.cloud.firestore.annotation.PropertyName;
 
-@JsonIgnoreProperties({"bookId", "createdAt"})
 public class Book extends BasicBook {
 
     private String description;
 
-    @Exclude
-    @JsonIgnore
-    private Metadata genre;
+    private String genre;
 
-    @Exclude
-    @JsonIgnore
-    private Metadata publisher;
+    private String publisher;
 
     private Integer yearOfPublishing;
 
     private Integer count;
 
-    private String photoUrl;
+    private String photoURL;
 
     @Exclude
     private User creator;
@@ -41,9 +35,9 @@ public class Book extends BasicBook {
     public Book(String bookId,
                 String title,
                 String description,
-                Metadata author,
-                Metadata publisher,
-                Metadata genre,
+                String author,
+                String publisher,
+                String genre,
                 Integer yearOfPublishing,
                 Timestamp createdAt) {
         super(bookId, title, author);
@@ -77,60 +71,20 @@ public class Book extends BasicBook {
         this.yearOfPublishing = yearOfPublishing;
     }
 
-    @Exclude
-    @JsonIgnore
-    public Metadata getPublisher() {
+    public String getPublisher() {
         return publisher;
     }
 
-    @Exclude
-    @JsonGetter("publisher")
-    public String getPublisherDisplay() {
-        return publisher == null ? null : publisher.getName();
-    }
-
-    @JsonIgnore
-    @PropertyName("publisher")
-    public String getPublisherId() {
-        return publisher == null ? null : publisher.getMetadataId();
-    }
-
-    @Exclude
-    public void setPublisher(Metadata publisher) {
+    public void setPublisher(String publisher) {
         this.publisher = publisher;
     }
 
-    @JsonSetter
-    public void setPublisher(String publisher) {
-        this.publisher = new Metadata(publisher, null, MetadataType.PUBLISHER, null);
-    }
-
-    @Exclude
-    @JsonIgnore
-    public Metadata getGenre() {
+    public String getGenre() {
         return genre;
     }
 
-    @Exclude
-    @JsonGetter("genre")
-    public String getGenreDisplay() {
-        return genre == null ? null : genre.getName();
-    }
-
-    @JsonIgnore
-    @PropertyName("genre")
-    public String getGenreId() {
-        return genre == null ? null : genre.getMetadataId();
-    }
-
-    @Exclude
-    public void setGenre(Metadata genre) {
-        this.genre = genre;
-    }
-
-    @JsonSetter
     public void setGenre(String genre) {
-        this.genre = new Metadata(genre, null, MetadataType.GENRE, null);
+        this.genre = genre;
     }
 
     @JsonIgnore
@@ -170,11 +124,11 @@ public class Book extends BasicBook {
         this.count = count;
     }
 
-    public String getPhotoUrl() {
-        return photoUrl;
+    public String getPhotoURL() {
+        return photoURL;
     }
 
-    public void setPhotoUrl(String photoUrl) {
-        this.photoUrl = photoUrl;
+    public void setPhotoURL(String photoURL) {
+        this.photoURL = photoURL;
     }
 }

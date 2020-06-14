@@ -8,7 +8,7 @@ import {Router} from '@angular/router';
   template: `
     <div>
       <mat-toolbar style="background-color: transparent;">
-        <mat-toolbar-row class="mini-sidenav-toolbar" *ngFor="let nav of navigationService.sideNavButtons">
+        <mat-toolbar-row *ngFor="let nav of navigationService.sideNavButtons" class="mini-sidenav-toolbar">
           <mini-sidenav-btn-component
             [isActive]="nav.isActive"
             [icon]="nav.icon"

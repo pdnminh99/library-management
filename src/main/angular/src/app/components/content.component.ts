@@ -68,7 +68,7 @@ import { Router } from "@angular/router";
   ],
 })
 export class ContentComponent {
-  public searchValue = "";
+  public searchValue = '';
 
   public currentActiveId = 0;
 

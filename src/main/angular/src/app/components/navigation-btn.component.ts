@@ -52,6 +52,7 @@ export class NavigationButtonComponent {
     return `${this._fontSize}px`;
   }
 
+  // tslint:disable-next-line:no-output-on-prefix
   @Output()
   private onButtonClicked = new EventEmitter<void>();
 

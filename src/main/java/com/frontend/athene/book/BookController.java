@@ -36,16 +36,19 @@ public class BookController {
     }
 
     @PostMapping
+    @CrossOrigin
     public Book create(@RequestBody Book book) throws ExecutionException, InterruptedException {
         return service.create(book);
     }
 
-    @DeleteMapping("{bookId}")
-    public void delete(@PathVariable String bookId) {
+    @DeleteMapping("{bookId}/{userId}")
+    @CrossOrigin
+    public void delete(@PathVariable String bookId, @PathVariable String userId) {
+        service.delete(bookId, userId);
     }
 
-    @PatchMapping
-    public Book patch(@RequestBody Book book) {
+    @PatchMapping("{userId}")
+    public Book patch(@PathVariable String userId, @RequestBody Book book) {
         return null;
     }
 

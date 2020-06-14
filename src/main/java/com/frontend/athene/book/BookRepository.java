@@ -1,5 +1,6 @@
 package com.frontend.athene.book;
 
+import com.frontend.athene.user.User;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.cloud.Timestamp;
@@ -20,6 +21,8 @@ public class BookRepository {
 
     private final CollectionReference metadataCollection;
 
+    private final CollectionReference usersCollection;
+
     private final Firestore firestore;
 
     private WriteBatch batch;
@@ -27,9 +30,11 @@ public class BookRepository {
     @Autowired
     public BookRepository(@Qualifier("booksCollection") CollectionReference booksCollection,
                           @Qualifier("metadataCollection") CollectionReference metadataCollection,
+                          @Qualifier("usersCollection") CollectionReference usersCollection,
                           Firestore firestore) {
         this.booksCollection = booksCollection;
         this.metadataCollection = metadataCollection;
+        this.usersCollection = usersCollection;
         this.firestore = firestore;
     }
 
@@ -66,28 +71,26 @@ public class BookRepository {
         batch = null;
     }
 
-    public void create(Metadata input) throws ExecutionException, InterruptedException {
-        if (input == null) {
+    public void create(String name, MetadataType type) throws ExecutionException, InterruptedException {
+        if (name == null || type == null) {
             return;
         }
         List<QueryDocumentSnapshot> docs = metadataCollection
-                .whereEqualTo("type", input.getTypeName())
-                .whereEqualTo("name", input.getName())
+                .whereEqualTo("type", type.toString())
+                .whereEqualTo("name", name)
                 .get()
                 .get()
                 .getDocuments();
+        Metadata metadata;
         if (docs.size() == 0) {
-            input.setCount(1);
-            input.setCreatedAt(Timestamp.now());
-            input.setMetadataId(metadataCollection.document().getId());
-
-            metadataCollection.add(input);
+            metadata = new Metadata(name, 1, type, Timestamp.now());
+            metadataCollection.add(metadata);
             return;
         }
-        input = docs.get(0).toObject(Metadata.class);
-        int count = input.getCount();
+        metadata = docs.get(0).toObject(Metadata.class);
+        int count = metadata.getCount();
         count += 1;
-        metadataCollection.document(input.getMetadataId())
+        metadataCollection.document(metadata.getMetadataId())
                 .update("count", count);
     }
 
@@ -106,5 +109,23 @@ public class BookRepository {
                 .get()
                 .get()
                 .toObject(Book.class);
+    }
+
+    public List<Metadata> getMetadata(List<String> name, MetadataType type) throws ExecutionException, InterruptedException {
+        return metadataCollection.whereEqualTo("type", type.toString())
+                .whereIn("name", name)
+                .get()
+                .get()
+                .getDocuments()
+                .stream()
+                .map(m -> m.toObject(Metadata.class))
+                .collect(Collectors.toList());
+    }
+
+    public User getUser(String userId) throws ExecutionException, InterruptedException {
+        return usersCollection.document(userId)
+                .get()
+                .get()
+                .toObject(User.class);
     }
 }

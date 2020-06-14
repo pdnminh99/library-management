@@ -10,29 +10,29 @@ export enum ToolbarMode {
   template: `
     <mat-toolbar id="toolbar">
 
-      <button *ngIf="isCreateMode" mat-flat-button style="margin-right: 10px" [routerLink]="['']" color="primary">
+      <button *ngIf="isCreateMode" [disabled]="disableAll" [routerLink]="['']" color="primary" mat-flat-button style="margin-right: 10px">
         <mat-icon>add_circle_outline</mat-icon>
         Save
       </button>
 
-      <button *ngIf="isCreateMode" mat-flat-button style="margin-right: 10px" [routerLink]="['']" color="warn">
+      <button *ngIf="isCreateMode" [disabled]="disableAll" [routerLink]="['']" color="warn" mat-flat-button style="margin-right: 10px">
         <mat-icon>add_circle_outline</mat-icon>
         Discard
       </button>
 
-      <button *ngIf="isStaticMode" mat-flat-button style="margin-right: 10px;" [routerLink]="['create']">
+      <button *ngIf="isStaticMode" [disabled]="disableAll" [routerLink]="['create']" mat-flat-button style="margin-right: 10px;">
         <mat-icon>add_circle_outline</mat-icon>
         Create
       </button>
-      <button *ngIf="isStaticMode" mat-flat-button style="margin-right: 10px;">
+      <button *ngIf="isStaticMode" [disabled]="disableAll" mat-flat-button style="margin-right: 10px;">
         <mat-icon>create</mat-icon>
         Edit
       </button>
-      <button *ngIf="isStaticMode" mat-flat-button style="margin-right: 10px;">
+      <button *ngIf="isStaticMode" [disabled]="disableAll" mat-flat-button style="margin-right: 10px;">
         <mat-icon>delete</mat-icon>
         Delete
       </button>
-      <button *ngIf="isStaticMode" mat-flat-button style="margin-right: 10px;">
+      <button *ngIf="isStaticMode" [disabled]="disableAll" mat-flat-button style="margin-right: 10px;">
         <mat-icon>refresh</mat-icon>
         Refresh
       </button>
@@ -50,6 +50,9 @@ export enum ToolbarMode {
   `]
 })
 export class ToolbarComponent {
+
+  @Input()
+  public disableAll = false;
 
   @Input()
   public mode: ToolbarMode = ToolbarMode.STATIC;

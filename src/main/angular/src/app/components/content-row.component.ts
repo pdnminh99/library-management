@@ -51,19 +51,19 @@ export class ContentRowComponent {
   private _title = '';
 
   public get title(): string {
-    if (this._title.length > 40) {
+    if (this._title?.length > 40) {
       return this._title.substr(0, 40) + '...';
     }
     return this._title;
   }
 
+  // tslint:disable-next-line:no-input-rename
   @Input('description')
   // tslint:disable-next-line:variable-name
   private _description = '';
 
   public get description(): string {
-    return this._description;
-    if (this._description !== null && this._description.length > 40) {
+    if (this._description?.length > 40) {
       return this._description.substr(0, 40) + '...';
     }
     return this._description;

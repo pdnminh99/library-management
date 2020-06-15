@@ -64,7 +64,7 @@ export class BasicUser implements Displayable {
   }
 
   public get description(): string {
-    return this.type;
+    return this.type.toString();
   }
 
   public get navigate(): string {
@@ -108,4 +108,22 @@ export class Loan implements Displayable {
     return this.loanId;
   }
 
+}
+
+export interface EntityService<T extends A, A extends Displayable> {
+  items: A[];
+  selectedItem: T;
+  isActive: boolean;
+  isProcessing: boolean;
+  isCreateMode: boolean;
+
+  getAll(): void;
+
+  get(id: string): void;
+
+  refresh(): void;
+
+  delete(): void;
+
+  update(patch: T): void;
 }

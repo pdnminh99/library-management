@@ -5,7 +5,7 @@ import {auth, User} from 'firebase';
 import {isNullOrUndefined} from 'util';
 import {Observable, Subscription} from 'rxjs';
 import {AngularFirestore, AngularFirestoreDocument} from '@angular/fire/firestore';
-import {BasicUser, UserType} from '../models/Model';
+import {BasicUser, DisplayColor, UserType} from '../models/Model';
 import Timestamp = firebase.firestore.Timestamp;
 
 @Injectable({
@@ -70,9 +70,17 @@ export class AuthenticationService {
 
     if (!data.exists) {
       const {uid, displayName, photoURL, phoneNumber, email} = user;
-      this._currentUser = new BasicUser(
-        uid, displayName, photoURL, email, phoneNumber, UserType.GUEST, null, null, Timestamp.now()
-      );
+      this._currentUser = {
+        userId: uid,
+        displayName,
+        photoURL,
+        email,
+        phoneNumber,
+        type: UserType.GUEST,
+        address: null,
+        citizenId: null,
+        createdAt: Timestamp.now()
+      } as BasicUser;
       await this.currentUserDoc.set(this._currentUser);
     } else {
       this._currentUser = data.data() as BasicUser;

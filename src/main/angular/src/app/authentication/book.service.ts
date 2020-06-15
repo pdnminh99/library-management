@@ -1,21 +1,31 @@
 import {Injectable} from '@angular/core';
-import {BasicBook, Book} from '../models/Model';
+import {BasicBook, Book, EntityService} from '../models/Model';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {environment} from '../../environments/environment';
-import {Observable} from 'rxjs';
 import {Router} from '@angular/router';
 
-@Injectable({providedIn: 'root'})
-export class BookService {
-  public books: BasicBook[] = [];
+@Injectable({
+  providedIn: 'root'
+})
+export class BookService implements EntityService<Book, BasicBook> {
 
-  public book: Book;
+  public get isActive(): boolean {
+    return this.selectedItem !== undefined;
+  }
 
-  public get isBookActive(): boolean {
-    return this.book !== undefined;
+  constructor(private http: HttpClient, private router: Router) {
+    this.getAll();
+    this.router.events.subscribe(_ => {
+      const routes = location.pathname.split('/');
+      if (routes[1] === 'resources' && routes.length === 3) {
+        this.get(routes[2]);
+      }
+    });
   }
 
   public isProcessing = false;
+
+  public isCreateMode = false;
 
   private corsHeaders = new HttpHeaders({
     'Content-Type': 'application/json',
@@ -23,33 +33,60 @@ export class BookService {
     'Access-Control-Allow-Origin': 'http://localhost:8080/api/v1/book',
   });
 
-  constructor(private http: HttpClient, private router: Router) {
+  public items: BasicBook[] = [];
+
+  public selectedItem: Book;
+
+  public getAll(): void {
     this.isProcessing = true;
-    http
+    this.http
       .get<BasicBook[]>(`${environment.serverURI}/book`, {
         headers: this.corsHeaders,
       })
       .subscribe((value) => {
-        this.books = value.map(v => new BasicBook(v.bookId, v.title, v.author));
+        this.items = value.map(v => new BasicBook(v.bookId, v.title, v.author));
         this.isProcessing = false;
       });
-    this.router.events.subscribe(_ => {
-      const routes = location.pathname.split('/');
-      if (routes[1] === 'resources' && routes.length === 3) {
-        this.getBook(routes[2]);
-      }
-    });
   }
 
-  public getBook(bookId: string) {
+  public get(bookId: string) {
     this.isProcessing = true;
     this.http
       .get<Book>(`${environment.serverURI}/book/${bookId}`, {
         headers: this.corsHeaders,
       })
       .subscribe((value) => {
-        this.book = value;
+        this.selectedItem = value;
         this.isProcessing = false;
       });
+  }
+
+  public refresh() {
+    this.getAll();
+    if (this.selectedItem !== undefined) {
+      this.get(this.selectedItem.bookId);
+    }
+  }
+
+  public delete() {
+    if (this.selectedItem === undefined) {
+      return;
+    }
+    const bookIdToRemove = this.selectedItem.bookId;
+    this.http.delete(`${environment.serverURI}/book/${bookIdToRemove}`, {
+      headers: this.corsHeaders,
+    })
+      .subscribe(_ => {
+        this.selectedItem = undefined;
+        for (let index = 0; index < this.items.length; index++) {
+          if (this.items[index].bookId === bookIdToRemove) {
+            this.items.splice(index, 1);
+          }
+        }
+      });
+  }
+
+  public update(newVersion: Book) {
+
   }
 }

@@ -1,10 +1,8 @@
-import {Component} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {isNullOrUndefined} from 'util';
 import {BookService} from '../authentication/book.service';
-import {BasicBook} from '../models/Model';
+import {BasicBook, Displayable, EntityService} from '../models/Model';
 import {Router} from '@angular/router';
-
-// TODO Should I remove this component?
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -17,7 +15,6 @@ import {Router} from '@angular/router';
             matInput
             type="text"
             placeholder="Search"
-            [(ngModel)]="searchValue"
           />
           <button matSuffix mat-icon-button>
             <mat-icon>filter_list</mat-icon>
@@ -25,19 +22,8 @@ import {Router} from '@angular/router';
         </mat-form-field>
 
         <content-list-component
-          [items]="books"
+          [items]="items"
           id="content-list"></content-list-component>
-
-        <!--        <div-->
-        <!--          <content-row-component-->
-        <!--            style="margin: 2px 0;"-->
-        <!--            *ngFor="let book of books"-->
-        <!--            [isActive]="false"-->
-        <!--            [title]="book.title"-->
-        <!--            [description]="book.author"-->
-        <!--            (onRowClicked)="handleBookChoose(book.bookId)"-->
-        <!--          ></content-row-component>-->
-        <!--        </div>-->
 
         <mat-paginator
           [length]="100"
@@ -79,27 +65,23 @@ import {Router} from '@angular/router';
     `,
   ],
 })
-export class ContentComponent {
-  public searchValue = '';
+export class ContentComponent<T extends A, A extends Displayable> {
 
-  public currentActiveId = 0;
+  @Input()
+  public service: EntityService<T, A>;
 
-  constructor(public bookService: BookService, private router: Router) {
+  constructor() {
   }
 
-  public handleBookChoose(bookId: string) {
-    this.bookService.getBook(bookId);
-    this.router.navigateByUrl(`resources/${bookId}`);
-  }
-
-  public get books(): BasicBook[] {
+  public get items(): A[] {
+    return this.service.items;
     // tslint:disable-next-line:triple-equals
-    if (this.searchValue.trim().length == 0) {
-      return this.bookService.books;
-    }
-    return this.bookService.books.filter(
-      (book) =>
-        !isNullOrUndefined(book.title) && book.title.includes(this.searchValue)
-    );
+    // if (this.searchValue.trim().length == 0) {
+    //   return this.bookService.items;
+    // }
+    // return this.bookService.items.filter(
+    //   (book) =>
+    //     !isNullOrUndefined(book.title) && book.title.includes(this.searchValue)
+    // );
   }
 }

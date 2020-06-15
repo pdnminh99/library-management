@@ -6,44 +6,44 @@ import {Book} from '../models/Model';
   // tslint:disable-next-line:component-selector
   selector: 'view-resource-component',
   template: `
-    <div style="display: flex; flex-direction: column; align-items: center;">
-      <toolbar-component style="width: 100%;" [disableAll]="bookService.isProcessing"></toolbar-component>
+      <div style="display: flex; flex-direction: column; align-items: center;">
+          <toolbar-component style="width: 100%;" [disableAll]="bookService.isProcessing"></toolbar-component>
 
-      <div id="content-detail" *ngIf="bookService.isBookActive">
-        <img class="book-cover" *ngIf="book.photoURL != undefined"
-             [src]="book.photoURL"
-             [alt]="book.title">
-        <img class="book-cover"
-             *ngIf="book.photoURL == undefined"
-             [src]="emptyImage"
-             alt="No image found!">
-        <div id="detail">
-          <h1 style="font-weight: bolder">{{ book.title || "No content" }}</h1>
+          <div id="content-detail" *ngIf="bookService.isActive">
+              <img class="book-cover" *ngIf="book.photoURL != undefined"
+                   [src]="book.photoURL"
+                   [alt]="book.title">
+              <img class="book-cover"
+                   *ngIf="book.photoURL == undefined"
+                   [src]="emptyImage"
+                   alt="No image found!">
+              <div id="detail">
+                  <h1 style="font-weight: bolder">{{ book.title || "No content" }}</h1>
 
-          <div style="margin-bottom: 10px;">
-            <p>Added on {{ createdAtDisplay }} by</p>
-            <div style="display: flex; align-items: center; justify-content: flex-start;">
-              <img style="width: 40px; border-radius: 50px; margin-right: 10px;" [src]="book.creator.photoURL"
-                   [alt]="book.creator.displayName">
-              <p style="font-weight: bold; margin: 0;">{{ book.creator.displayName }}</p>
-            </div>
+                  <div style="margin-bottom: 10px;">
+                      <p>Added on {{ createdAtDisplay }} by</p>
+                      <div style="display: flex; align-items: center; justify-content: flex-start;">
+                          <img style="width: 40px; border-radius: 50px; margin-right: 10px;" [src]="book.creator.photoURL"
+                               [alt]="book.creator.displayName">
+                          <p style="font-weight: bold; margin: 0;">{{ book.creator.displayName }}</p>
+                      </div>
+                  </div>
+
+                  <hr/>
+                  <p style="text-align: justify">{{ book.description }}</p>
+
+                  <div style="display: flex; flex-wrap: wrap;">
+                      <book-status-component style="margin: 3px 5px;" title="Author" [content]="book.author"></book-status-component>
+                      <book-status-component style="margin: 0 5px;" title="Count"
+                                             [content]="book.count.toString()"></book-status-component>
+                      <book-status-component style="margin: 0 5px;" title="Genre" [content]="book.genre"></book-status-component>
+                      <book-status-component style="margin: 0 5px;" title="Publisher" [content]="book.publisher"></book-status-component>
+                      <book-status-component style="margin: 0 5px;" title="Year"
+                                             [content]="book.yearOfPublishing.toString()"></book-status-component>
+                  </div>
+              </div>
           </div>
-
-          <hr/>
-          <p style="text-align: justify">{{ book.description }}</p>
-
-          <div style="display: flex; flex-wrap: wrap;">
-            <book-status-component style="margin: 3px 5px;" title="Author" [content]="book.author"></book-status-component>
-            <book-status-component style="margin: 0 5px;" title="Count"
-                                   [content]="book.count.toString()"></book-status-component>
-            <book-status-component style="margin: 0 5px;" title="Genre" [content]="book.genre"></book-status-component>
-            <book-status-component style="margin: 0 5px;" title="Publisher" [content]="book.publisher"></book-status-component>
-            <book-status-component style="margin: 0 5px;" title="Year"
-                                   [content]="book.yearOfPublishing.toString()"></book-status-component>
-          </div>
-        </div>
       </div>
-    </div>
   `,
   styles: [`
     .book-cover {
@@ -84,7 +84,7 @@ export class ViewResourceComponent {
   public emptyImage = 'https://thumbs.dreamstime.com/b/black-linear-photo-camera-logo-like-no-image-available-black-linear-photo-camera-logo-like-no-image-available-flat-stroke-style-106031126.jpg';
 
   public get book(): Book {
-    return this.bookService.book;
+    return this.bookService.selectedItem;
   }
 
   public get createdAtDisplay(): string {

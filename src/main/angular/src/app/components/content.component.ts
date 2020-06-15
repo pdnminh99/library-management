@@ -1,15 +1,17 @@
-import { Component } from "@angular/core";
-import { isNullOrUndefined } from "util";
-import { BookService } from "../authentication/book.service";
+import {Component} from '@angular/core';
+import {isNullOrUndefined} from 'util';
+import {BookService} from '../authentication/book.service';
 import {BasicBook} from '../models/Model';
-import { Router } from "@angular/router";
+import {Router} from '@angular/router';
+
+// TODO Should I remove this component?
 
 @Component({
   // tslint:disable-next-line:component-selector
-  selector: "content-component",
+  selector: 'content-component',
   template: `
     <div style="height: 100%; display: flex;">
-      <div id="list-contents">
+      <div id="left-panel">
         <mat-form-field id="mini-searchbar" appearance="fill">
           <input
             matInput
@@ -22,18 +24,20 @@ import { Router } from "@angular/router";
           </button>
         </mat-form-field>
 
-        <div
-          style="overflow-y: auto; flex: 4; display: flex; flex-direction: column; align-items: stretch;"
-        >
-          <content-row-component
-            style="margin: 2px 0;"
-            *ngFor="let book of books"
-            [isActive]="false"
-            [title]="book.title"
-            [description]="book.author"
-            (onRowClicked)="handleBookChoose(book.bookId)"
-          ></content-row-component>
-        </div>
+        <content-list-component
+          [items]="books"
+          id="content-list"></content-list-component>
+
+        <!--        <div-->
+        <!--          <content-row-component-->
+        <!--            style="margin: 2px 0;"-->
+        <!--            *ngFor="let book of books"-->
+        <!--            [isActive]="false"-->
+        <!--            [title]="book.title"-->
+        <!--            [description]="book.author"-->
+        <!--            (onRowClicked)="handleBookChoose(book.bookId)"-->
+        <!--          ></content-row-component>-->
+        <!--        </div>-->
 
         <mat-paginator
           [length]="100"
@@ -48,8 +52,16 @@ import { Router } from "@angular/router";
     </div>
   `,
   styles: [
-    `
-      #list-contents {
+      `
+      #content-list {
+        overflow-y: auto;
+        flex: 4;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      #left-panel {
         flex: 1;
         background-color: transparent;
         display: flex;
@@ -60,7 +72,7 @@ import { Router } from "@angular/router";
       }
 
       @media screen and (max-width: 900px) {
-        #list-contents {
+        #left-panel {
           display: none;
         }
       }
@@ -72,7 +84,8 @@ export class ContentComponent {
 
   public currentActiveId = 0;
 
-  constructor(public bookService: BookService, private router: Router) {}
+  constructor(public bookService: BookService, private router: Router) {
+  }
 
   public handleBookChoose(bookId: string) {
     this.bookService.getBook(bookId);

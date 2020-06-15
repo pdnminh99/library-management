@@ -1,14 +1,12 @@
 import {Injectable} from '@angular/core';
 import {AngularFireAuth} from '@angular/fire/auth';
+import * as firebase from 'firebase';
 import {auth, User} from 'firebase';
 import {isNullOrUndefined} from 'util';
 import {Observable, Subscription} from 'rxjs';
 import {AngularFirestore, AngularFirestoreDocument} from '@angular/fire/firestore';
 import {BasicUser, UserType} from '../models/Model';
 import Timestamp = firebase.firestore.Timestamp;
-import * as firebase from 'firebase';
-import {Router} from '@angular/router';
-import {NavigationService} from './navigation.service';
 
 @Injectable({
   providedIn: 'root',
@@ -72,18 +70,9 @@ export class AuthenticationService {
 
     if (!data.exists) {
       const {uid, displayName, photoURL, phoneNumber, email} = user;
-      this._currentUser = {
-        userId: uid,
-        displayName,
-        email,
-        photoURL,
-        phoneNumber,
-        address: null,
-        citizenId: null,
-        type: UserType.GUEST,
-        createdAt: Timestamp.now()
-      };
-
+      this._currentUser = new BasicUser(
+        uid, displayName, photoURL, email, phoneNumber, UserType.GUEST, null, null, Timestamp.now()
+      );
       await this.currentUserDoc.set(this._currentUser);
     } else {
       this._currentUser = data.data() as BasicUser;

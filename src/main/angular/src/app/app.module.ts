@@ -46,6 +46,8 @@ import {HttpClientModule} from '@angular/common/http';
 import {MatGridListModule} from '@angular/material/grid-list';
 import {BookStatusComponent} from './components/book-status.component';
 import {MatSelectModule} from '@angular/material/select';
+import {ContentListComponent} from './components/content-list.component';
+import {ViewMemberComponent} from './components/view-member.component';
 
 @NgModule({
   declarations: [
@@ -70,31 +72,33 @@ import {MatSelectModule} from '@angular/material/select';
     CreateResourceFormComponent,
     ToolbarComponent,
     ViewResourceComponent,
-    BookStatusComponent
+    BookStatusComponent,
+    ContentListComponent,
+    ViewMemberComponent
   ],
-    imports: [
-        AngularFireModule.initializeApp(environment.firebase),
-        BrowserAnimationsModule,
-        AngularFirestoreModule,
-        MatProgressSpinnerModule,
-        MatSidenavModule,
-        FormsModule,
-        MatFormFieldModule,
-        MatIconModule,
-        MatButtonModule,
-        BrowserModule,
-        MatToolbarModule,
-        MatListModule,
-        MatPaginatorModule,
-        MatInputModule,
-        MatCardModule,
-        MatMenuModule,
-        AppRoutingModule,
-        HttpClientModule,
-        MatGridListModule,
-        MatChipsModule,
-        MatSelectModule
-    ],
+  imports: [
+    AngularFireModule.initializeApp(environment.firebase),
+    BrowserAnimationsModule,
+    AngularFirestoreModule,
+    MatProgressSpinnerModule,
+    MatSidenavModule,
+    FormsModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatButtonModule,
+    BrowserModule,
+    MatToolbarModule,
+    MatListModule,
+    MatPaginatorModule,
+    MatInputModule,
+    MatCardModule,
+    MatMenuModule,
+    AppRoutingModule,
+    HttpClientModule,
+    MatGridListModule,
+    MatChipsModule,
+    MatSelectModule
+  ],
   providers: [],
   bootstrap: [AppRoot],
 })

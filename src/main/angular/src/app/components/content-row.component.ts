@@ -1,8 +1,8 @@
-import { Component, Output, EventEmitter, Input } from "@angular/core";
+import {Component, Output, EventEmitter, Input} from '@angular/core';
 
 @Component({
   // tslint:disable-next-line:component-selector
-  selector: "content-row-component",
+  selector: 'content-row-component',
   template: `
     <button
       mat-flat-button
@@ -19,7 +19,7 @@ import { Component, Output, EventEmitter, Input } from "@angular/core";
     </button>
   `,
   styles: [
-    `
+      `
       h5,
       p {
         margin: 0;
@@ -46,23 +46,25 @@ import { Component, Output, EventEmitter, Input } from "@angular/core";
 })
 export class ContentRowComponent {
   // tslint:disable-next-line:no-input-rename
-  @Input("title")
+  @Input('title')
   // tslint:disable-next-line:variable-name
-  private _title = "";
+  private _title = '';
 
   public get title(): string {
     if (this._title.length > 40) {
-      return this._title.substr(0, 40) + "...";
+      return this._title.substr(0, 40) + '...';
     }
     return this._title;
   }
 
-  @Input("description")
-  private _description = "";
+  @Input('description')
+  // tslint:disable-next-line:variable-name
+  private _description = '';
 
   public get description(): string {
+    return this._description;
     if (this._description !== null && this._description.length > 40) {
-      return this._description.substr(0, 40) + "...";
+      return this._description.substr(0, 40) + '...';
     }
     return this._description;
   }

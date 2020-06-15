@@ -47,7 +47,6 @@ export class BookService {
       })
       .subscribe((value) => {
         this.book = value;
-        console.log(value);
         this.isProcessing = false;
       });
   }

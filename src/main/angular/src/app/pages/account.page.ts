@@ -100,8 +100,8 @@ import {BasicUser, UserType} from '../models/Model';
 
           </div>
 
-          <button mat-raised-button>Save</button>
-          <button mat-raised-button color="accent">Reset</button>
+          <button mat-stroked-button style="font-size: larger; margin-right: 20px;">Save</button>
+          <button mat-stroked-button style="font-size: larger">Reset</button>
 
         </div>
       </mat-card>

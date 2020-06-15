@@ -12,7 +12,7 @@ import {Router} from '@angular/router';
           <mini-sidenav-btn-component
             [isActive]="nav.isActive"
             [icon]="nav.icon"
-            (click)="navigationService.navigate(nav)"
+            [routerLink]="nav.navigation"
           ></mini-sidenav-btn-component>
         </mat-toolbar-row>
       </mat-toolbar>

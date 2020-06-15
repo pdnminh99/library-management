@@ -8,10 +8,12 @@ export interface SideNavigation {
   isActive: boolean;
 }
 
-export interface BasicBook {
+export class BasicBook implements Displayable {
   bookId: string;
   title: string;
   author: string;
+  color: DisplayColor;
+  description: string;
 }
 
 export interface Book extends BasicBook {
@@ -39,4 +41,14 @@ export interface BasicUser {
 
 export enum UserType {
   GUEST = 'GUEST', ADMIN = 'ADMIN', MEMBER = 'MEMBER'
+}
+
+export enum DisplayColor {
+  PRIMARY, WARN, NORMAL
+}
+
+export interface Displayable {
+  title: string;
+  description: string;
+  color: DisplayColor;
 }

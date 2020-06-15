@@ -15,7 +15,7 @@ import {NavigationService} from '../authentication/navigation.service';
 
         <navigation-button-component
           *ngFor="let nav of navigationService.sideNavButtons"
-          (click)="navigationService.navigate(nav)"
+          [routerLink]="nav.navigation"
           [icon]="nav.icon"
           [isActive]="nav.isActive"
           [title]="nav.navigation"

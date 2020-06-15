@@ -1,7 +1,7 @@
 import { Component } from "@angular/core";
 import { isNullOrUndefined } from "util";
 import { BookService } from "../authentication/book.service";
-import { BasicBook } from "../models/Model";
+import {BasicBook} from '../models/Model';
 import { Router } from "@angular/router";
 
 @Component({

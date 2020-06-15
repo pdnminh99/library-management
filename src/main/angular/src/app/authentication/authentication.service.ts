@@ -86,7 +86,6 @@ export class AuthenticationService {
 
       await this.currentUserDoc.set(this._currentUser);
     } else {
-      console.log(data.data());
       this._currentUser = data.data() as BasicUser;
     }
     this.userSubscription = this.currentUserDoc.valueChanges()
@@ -98,8 +97,9 @@ export class AuthenticationService {
   signOut() {
     this.firebaseAuth.signOut().then(() => {
       this._currentUser = null;
-      this.currentUserDoc = undefined;
+      this.currentUserDoc = null;
       this.userSubscription?.unsubscribe();
+      this.userSubscription = null;
     });
   }
 

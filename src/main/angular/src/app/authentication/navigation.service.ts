@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {SideNavigation, UserType} from '../models/Model';
-import {ActivatedRoute, Router} from '@angular/router';
+import {Router} from '@angular/router';
 import {AuthenticationService} from './authentication.service';
 
 
@@ -36,18 +36,8 @@ export class NavigationService {
   }];
 
   public get sideNavButtons(): SideNavigation[] {
-    if (this.auth.currentUser === undefined) {
-      return [{
-        id: 0,
-        navigation: 'dashboard',
-        icon: 'apps',
-        isActive: false
-      }, {
-        id: 1,
-        navigation: 'account',
-        icon: 'person',
-        isActive: false
-      }];
+    if (this.auth.currentUser === undefined || this.auth.currentUser === null) {
+      return [this._sideNavButtons[0]];
     }
     switch (this.auth.currentUser.type) {
       case UserType.ADMIN:
@@ -55,29 +45,26 @@ export class NavigationService {
       case UserType.MEMBER:
       case UserType.GUEST:
       default:
-        return [{
-          id: 0,
-          navigation: 'dashboard',
-          icon: 'apps',
-          isActive: false
-        }, {
-          id: 1,
-          navigation: 'account',
-          icon: 'person',
-          isActive: false
-        }];
+        return [this._sideNavButtons[0], this._sideNavButtons[4]];
     }
   }
 
   constructor(public auth: AuthenticationService, public router: Router) {
+    this.router.events.subscribe(value => {
+      const route = location.pathname.split('/');
+      // tslint:disable-next-line:forin
+      for (const index in this._sideNavButtons) {
+        this._sideNavButtons[index].isActive = this._sideNavButtons[index].navigation === route[1];
+      }
+    });
   }
 
-  public navigate(navigation: SideNavigation) {
-    // tslint:disable-next-line:forin
-    for (const index in this.sideNavButtons) {
-      this.sideNavButtons[index].isActive = false;
-    }
-    this.router.navigate([navigation.navigation]).then(r => this.sideNavButtons[navigation.id].isActive = true);
-  }
+  // public navigate(navigation: SideNavigation) {
+  //   // tslint:disable-next-line:forin
+  //   for (const index in this.sideNavButtons) {
+  //     this.sideNavButtons[index].isActive = false;
+  //   }
+  //   this.router.navigate([navigation.navigation]).then(r => this.sideNavButtons[navigation.id].isActive = true);
+  // }
 
 }

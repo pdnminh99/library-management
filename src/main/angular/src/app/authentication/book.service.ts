@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {BasicBook, Book, EntityService} from '../models/Model';
+import {BasicBook, Book, EntityService, ToolbarMode} from '../models/Model';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {environment} from '../../environments/environment';
 import {Router} from '@angular/router';
@@ -36,6 +36,8 @@ export class BookService implements EntityService<Book, BasicBook> {
   public items: BasicBook[] = [];
 
   public selectedItem: Book;
+
+  public mode: ToolbarMode = ToolbarMode.STATIC;
 
   public getAll(): void {
     this.isProcessing = true;

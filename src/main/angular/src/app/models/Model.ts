@@ -110,12 +110,16 @@ export class Loan implements Displayable {
 
 }
 
+export enum ToolbarMode {
+  CREATE, EDIT, STATIC
+}
+
 export interface EntityService<T extends A, A extends Displayable> {
   items: A[];
   selectedItem: T;
   isActive: boolean;
   isProcessing: boolean;
-  isCreateMode: boolean;
+  mode: ToolbarMode;
 
   getAll(): void;
 

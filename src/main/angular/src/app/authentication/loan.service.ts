@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {BasicUser, EntityService, Loan} from '../models/Model';
+import {BasicUser, EntityService, Loan, ToolbarMode} from '../models/Model';
 
 
 @Injectable({providedIn: 'root'})
@@ -18,9 +18,10 @@ export class LoanService implements EntityService<Loan, Loan> {
   public isProcessing = false;
 
   isActive: boolean;
-  isCreateMode: boolean;
   items: Loan[];
   selectedItem: Loan;
+
+  public mode: ToolbarMode = ToolbarMode.STATIC;
 
   delete(): void {
   }

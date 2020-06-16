@@ -1,4 +1,5 @@
 import {Component} from '@angular/core';
+import {MemberService} from '../authentication/member.service';
 
 
 @Component({
@@ -6,10 +7,12 @@ import {Component} from '@angular/core';
   selector: 'view-member-component',
   template: `
     <div>
-      <toolbar-component></toolbar-component>
+      <toolbar-component [service]="memberService"></toolbar-component>
       View member detail works!
     </div>
   `
 })
 export class ViewMemberComponent {
+  constructor(public memberService: MemberService) {
+  }
 }

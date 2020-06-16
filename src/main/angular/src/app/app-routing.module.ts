@@ -5,7 +5,6 @@ import {DashboardPage} from './pages/dashboard.page';
 import {MembersPage} from './pages/members.page';
 import {BookLoansPage} from './pages/book-loans.page';
 import {AccountPage} from './pages/account.page';
-import {CreateResourceFormComponent} from './components/create-resource-form.component';
 import {ViewResourceComponent} from './components/view-resource.component';
 import {ViewMemberComponent} from './components/view-member.component';
 
@@ -32,10 +31,6 @@ const routes: Routes = [
         component: ViewResourceComponent,
       },
       {
-        path: 'create',
-        component: CreateResourceFormComponent,
-      },
-      {
         path: '*',
         redirectTo: '',
       },
@@ -52,10 +47,6 @@ const routes: Routes = [
       {
         path: ':memberId',
         component: ViewMemberComponent,
-      },
-      {
-        path: 'create',
-        component: CreateResourceFormComponent,
       },
       {
         path: '*',

@@ -7,7 +7,7 @@ import {AppRoutingModule} from './app-routing.module';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatCardModule} from '@angular/material/card';
 import {MatIconModule} from '@angular/material/icon';
-import {FormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 import {LoginComponent} from './pages/login.page';
 import {LoginCardComponent} from './components/login-card.component';
@@ -22,6 +22,9 @@ import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatMenuModule} from '@angular/material/menu';
 import {MatChipsModule} from '@angular/material/chips';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import {MAT_DIALOG_DEFAULT_OPTIONS, MatDialogModule} from '@angular/material/dialog';
+import {TextFieldModule} from '@angular/cdk/text-field';
 
 import {environment} from 'src/environments/environment';
 import {SearchBarComponent} from './components/search-bar.component';
@@ -39,7 +42,6 @@ import {BookLoansPage} from './pages/book-loans.page';
 import {AccountPage} from './pages/account.page';
 import {MembersPage} from './pages/members.page';
 import {SearchPage} from './pages/search.page';
-import {CreateResourceFormComponent} from './components/create-resource-form.component';
 import {ToolbarComponent} from './components/toolbar.component';
 import {ViewResourceComponent} from './components/view-resource.component';
 import {HttpClientModule} from '@angular/common/http';
@@ -48,6 +50,9 @@ import {BookStatusComponent} from './components/book-status.component';
 import {MatSelectModule} from '@angular/material/select';
 import {ContentListComponent} from './components/content-list.component';
 import {ViewMemberComponent} from './components/view-member.component';
+import {BookStaticDisplayComponent} from './components/book-static-display.component';
+import {DeleteConfirmDialogComponent} from './components/delete-confirm-dialog.component';
+import {BookFormComponent} from './components/book-form.component';
 
 @NgModule({
   declarations: [
@@ -69,12 +74,14 @@ import {ViewMemberComponent} from './components/view-member.component';
     AccountPage,
     MembersPage,
     ContentRowComponent,
-    CreateResourceFormComponent,
     ToolbarComponent,
     ViewResourceComponent,
     BookStatusComponent,
     ContentListComponent,
-    ViewMemberComponent
+    ViewMemberComponent,
+    BookStaticDisplayComponent,
+    DeleteConfirmDialogComponent,
+    BookFormComponent
   ],
   imports: [
     AngularFireModule.initializeApp(environment.firebase),
@@ -97,9 +104,15 @@ import {ViewMemberComponent} from './components/view-member.component';
     HttpClientModule,
     MatGridListModule,
     MatChipsModule,
-    MatSelectModule
+    MatSelectModule,
+    MatDialogModule,
+    MatDatepickerModule,
+    ReactiveFormsModule,
+    TextFieldModule
   ],
-  providers: [],
+  providers: [
+    {provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: {hasBackdrop: false}}
+  ],
   bootstrap: [AppRoot],
 })
 export class AppModule {

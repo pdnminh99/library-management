@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {BasicUser, EntityService} from '../models/Model';
+import {BasicUser, EntityService, ToolbarMode} from '../models/Model';
 import {AngularFirestore, QueryDocumentSnapshot} from '@angular/fire/firestore';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
@@ -44,7 +44,7 @@ export class MemberService implements EntityService<BasicUser, BasicUser> {
 
   selectedItem: BasicUser;
 
-  isCreateMode = false;
+  public mode: ToolbarMode = ToolbarMode.STATIC;
 
   private membersSnapshots: QueryDocumentSnapshot<BasicUser>[];
 

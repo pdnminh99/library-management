@@ -1,38 +1,37 @@
-import {Component, Input} from '@angular/core';
-
-export enum ToolbarMode {
-  CREATE, EDIT, STATIC
-}
+import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Displayable, EntityService, ToolbarMode} from '../models/Model';
+import {DeleteConfirmDialogComponent} from './delete-confirm-dialog.component';
+import {MatDialog} from '@angular/material/dialog';
 
 @Component({
   // tslint:disable-next-line:component-selector
   selector: 'toolbar-component',
   template: `
     <mat-toolbar id="toolbar">
-
-      <button *ngIf="isCreateMode" [disabled]="disableAll" [routerLink]="['']" color="primary" mat-flat-button style="margin-right: 10px">
-        <mat-icon>add_circle_outline</mat-icon>
-        Save
-      </button>
-
-      <button *ngIf="isCreateMode" [disabled]="disableAll" [routerLink]="['']" color="warn" mat-flat-button style="margin-right: 10px">
-        <mat-icon>add_circle_outline</mat-icon>
-        Discard
-      </button>
-
-      <button *ngIf="isStaticMode" [disabled]="disableAll" [routerLink]="['create']" mat-flat-button style="margin-right: 10px;">
+      <button (click)="onCreate.emit()"
+              [disabled]="disableAll"
+              mat-flat-button
+              style="margin-right: 10px;">
         <mat-icon>add_circle_outline</mat-icon>
         Create
       </button>
-      <button *ngIf="isStaticMode" [disabled]="disableAll" mat-flat-button style="margin-right: 10px;">
+      <button (click)="onEdit.emit()"
+              [disabled]="disableAll"
+              mat-flat-button style="margin-right: 10px;">
         <mat-icon>create</mat-icon>
         Edit
       </button>
-      <button *ngIf="isStaticMode" [disabled]="disableAll" mat-flat-button style="margin-right: 10px;">
+      <button (click)="handleDeleteEvent()"
+              [disabled]="disableAll || !service.isActive"
+              mat-flat-button
+              style="margin-right: 10px;">
         <mat-icon>delete</mat-icon>
         Delete
       </button>
-      <button *ngIf="isStaticMode" [disabled]="disableAll" mat-flat-button style="margin-right: 10px;">
+      <button (click)="onRefresh.emit()"
+              [disabled]="disableAll"
+              mat-flat-button
+              style="margin-right: 10px;">
         <mat-icon>refresh</mat-icon>
         Refresh
       </button>
@@ -49,20 +48,42 @@ export enum ToolbarMode {
     }
   `]
 })
-export class ToolbarComponent {
+export class ToolbarComponent<T extends A, A extends Displayable> {
 
   @Input()
-  public disableAll = false;
+  public service: EntityService<T, A>;
 
-  @Input()
-  public mode: ToolbarMode = ToolbarMode.STATIC;
+  // tslint:disable-next-line:no-output-on-prefix
+  @Output()
+  public onDelete = new EventEmitter();
 
-  public get isCreateMode(): boolean {
-    return this.mode === ToolbarMode.CREATE;
+  // tslint:disable-next-line:no-output-on-prefix
+  @Output()
+  public onRefresh = new EventEmitter();
+
+  // tslint:disable-next-line:no-output-on-prefix
+  @Output()
+  public onCreate = new EventEmitter();
+
+  // tslint:disable-next-line:no-output-on-prefix
+  @Output()
+  public onEdit = new EventEmitter();
+
+  constructor(public dialog: MatDialog) {
   }
 
-  public get isStaticMode(): boolean {
-    return this.mode === ToolbarMode.STATIC;
+  public get disableAll(): boolean {
+    return this.service.isProcessing || this.service.mode !== ToolbarMode.STATIC;
   }
 
+  public handleDeleteEvent(): void {
+    const dialogRef = this.dialog.open(DeleteConfirmDialogComponent, {
+      data: this.service.selectedItem
+    });
+    dialogRef.afterClosed().subscribe(({answer}) => {
+      if (answer) {
+        this.onDelete.emit();
+      }
+    });
+  }
 }

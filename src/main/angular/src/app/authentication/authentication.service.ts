@@ -138,4 +138,12 @@ export class AuthenticationService {
   //     router
   //   });
   // }
+  update(newInfo: BasicUser) {
+    console.log(newInfo);
+    this.firestore.collection('users').doc(this._currentUser.userId)
+      .update(newInfo)
+      .then(_ => {
+        this._currentUser = {...this._currentUser, ...newInfo} as BasicUser;
+      });
+  }
 }

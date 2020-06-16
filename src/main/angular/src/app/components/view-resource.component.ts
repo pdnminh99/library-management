@@ -3,6 +3,7 @@ import {BookService} from '../authentication/book.service';
 import {Book, ToolbarMode} from '../models/Model';
 import {AuthenticationService} from '../authentication/authentication.service';
 import {HttpClient} from '@angular/common/http';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -10,7 +11,6 @@ import {HttpClient} from '@angular/common/http';
   template: `
     <div style="display: flex; flex-direction: column; align-items: center;">
       <toolbar-component
-        (onRefresh)="bookService.refresh()"
         (onDelete)="bookService.delete()"
         (onCreate)="handleCreateEvent()"
         (onEdit)="handleEditEvent()"
@@ -87,7 +87,16 @@ export class ViewResourceComponent {
   constructor(
     public bookService: BookService,
     public auth: AuthenticationService,
+    public route: ActivatedRoute,
     public http: HttpClient) {
+    this.route.params.subscribe(value => {
+      console.log(value.bookId);
+      if (value.bookId !== undefined) {
+        this.bookService.get(value.bookId);
+      } else {
+        this.bookService.selectedItem = undefined;
+      }
+    });
   }
 
   public handleCreateEvent() {
@@ -99,11 +108,12 @@ export class ViewResourceComponent {
   }
 
   public submit(book: Book) {
-    console.log(book);
     if (this.auth.currentUser === undefined) {
       return;
     }
-    book.creator = this.auth.currentUser;
+    book.creator = this.auth.currentUser.userId;
+    book.creatorInstance = this.auth.currentUser;
+
     this.bookService.create(book);
     this.bookService.mode = ToolbarMode.STATIC;
   }

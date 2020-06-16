@@ -5,7 +5,11 @@ import {MemberService} from '../authentication/member.service';
   // tslint:disable-next-line:component-selector
   selector: 'members-page',
   template: `
-    <content-component [service]="memberService"></content-component>
+    <content-component (onSearch)="memberService.onSearch($event)"
+                       (onPageTurn)="memberService.pageTurn($event.pageIndex)"
+                       (onFilterApply)="memberService.apply($event)"
+                       [service]="memberService"
+    ></content-component>
   `,
 })
 // tslint:disable-next-line:component-class-suffix

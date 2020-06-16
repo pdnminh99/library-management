@@ -28,13 +28,6 @@ import {MatDialog} from '@angular/material/dialog';
         <mat-icon>delete</mat-icon>
         Delete
       </button>
-      <button (click)="onRefresh.emit()"
-              [disabled]="disableAll"
-              mat-flat-button
-              style="margin-right: 10px;">
-        <mat-icon>refresh</mat-icon>
-        Refresh
-      </button>
     </mat-toolbar>
   `,
   styles: [`
@@ -48,18 +41,14 @@ import {MatDialog} from '@angular/material/dialog';
     }
   `]
 })
-export class ToolbarComponent<T extends A, A extends Displayable> {
+export class ToolbarComponent<T extends Displayable> {
 
   @Input()
-  public service: EntityService<T, A>;
+  public service: EntityService<T>;
 
   // tslint:disable-next-line:no-output-on-prefix
   @Output()
   public onDelete = new EventEmitter();
-
-  // tslint:disable-next-line:no-output-on-prefix
-  @Output()
-  public onRefresh = new EventEmitter();
 
   // tslint:disable-next-line:no-output-on-prefix
   @Output()

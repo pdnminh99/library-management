@@ -104,7 +104,7 @@ import {Book} from '../models/Model';
         <br/>
 
 
-        <button mat-stroked-button type="submit">Submit</button>
+        <button mat-stroked-button type="submit" [disabled]="isTheSame">Submit</button>
         <button mat-stroked-button style="margin-left: 10px;" (click)="handleDiscard()">Discard</button>
       </form>
     </div>
@@ -181,6 +181,19 @@ export class BookFormComponent implements OnInit {
   @Input()
   public publishers: string[] = [];
 
+  public get isTheSame(): boolean {
+    // tslint:disable-next-line:prefer-const
+    let {title, author, description, genre, publisher, yearOfPublishing, count, photoURL} = this.bookForm.value;
+    return this.book.title === title &&
+      this.book.author === author &&
+      this.book.description === description &&
+      this.book.genre === genre &&
+      this.book.publisher === publisher &&
+      this.book.yearOfPublishing === yearOfPublishing &&
+      this.book.count === count &&
+      this.book.photoURL === photoURL;
+  }
+
   public bookForm = this.formBuilder.group({
     title: ['', Validators.required],
     author: ['', Validators.required],
@@ -203,10 +216,6 @@ export class BookFormComponent implements OnInit {
       count: this.book.count,
       photoURL: this.book.photoURL
     });
-  }
-
-  chosenYearHandler(evt) {
-    // console.log(evt);
   }
 
   handleSubmit() {

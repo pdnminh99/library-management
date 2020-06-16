@@ -1,6 +1,7 @@
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {AuthenticationService} from '../authentication/authentication.service';
 import {BasicUser, UserType} from '../models/Model';
+import {FormBuilder, Validators} from '@angular/forms';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -18,7 +19,7 @@ import {BasicUser, UserType} from '../models/Model';
             <mat-chip *ngIf="isMember">Member</mat-chip>
           </mat-chip-list>
         </div>
-        <div *ngIf="isUserActive" style="flex: 2; padding: 0 10px;">
+        <form *ngIf="isUserActive" style="flex: 2; padding: 0 10px;" [formGroup]="userForm" (ngSubmit)="onSubmit()">
           <h1 style="font-weight: bold; font-size: 30px;">Account</h1>
           <p>Joined since {{ joinedTimestamp }}</p>
 
@@ -26,60 +27,38 @@ import {BasicUser, UserType} from '../models/Model';
             <div style="flex: 1; margin-right: 20px; width: 100%;">
               <mat-form-field appearance="outline" style="width: 100%;">
                 <mat-label>Full name</mat-label>
-                <input matInput>
+                <input matInput formControlName="displayName">
               </mat-form-field>
 
               <br/>
 
               <mat-form-field appearance="outline" style="width: 100%;">
                 <mat-label>Email</mat-label>
-                <input matInput>
+                <input matInput formControlName="email">
               </mat-form-field>
 
               <br/>
 
               <mat-form-field appearance="outline" style="width: 100%;">
                 <mat-label>Address</mat-label>
-                <input matInput>
-              </mat-form-field>
-
-              <br/>
-
-              <mat-form-field appearance="outline" style="width: 100%;">
-                <mat-label>Password</mat-label>
-                <input matInput [type]="passwordHide ? 'password' : 'text'">
-
-                <button mat-icon-button matSuffix (click)="passwordHide = !passwordHide" [attr.aria-label]="'Hide password'"
-                        [attr.aria-pressed]="passwordHide">
-                  <mat-icon>{{passwordHide ? 'visibility_off' : 'visibility'}}</mat-icon>
-                </button>
-              </mat-form-field>
-
-              <mat-form-field appearance="outline" style="width: 100%;">
-                <mat-label>Re-enter Password</mat-label>
-                <input matInput [type]="reenterPasswordHide ? 'password' : 'text'">
-
-                <button mat-icon-button matSuffix (click)="reenterPasswordHide = !reenterPasswordHide" [attr.aria-label]="'Hide password'"
-                        [attr.aria-pressed]="reenterPasswordHide">
-                  <mat-icon>{{reenterPasswordHide ? 'visibility_off' : 'visibility'}}</mat-icon>
-                </button>
+                <input matInput formControlName="address">
               </mat-form-field>
             </div>
-
 
             <div style="flex: 1;">
               <mat-form-field appearance="outline" style="width: 100%;">
                 <mat-label>Citizen ID</mat-label>
-                <input matInput>
+                <input matInput formControlName="citizenId">
               </mat-form-field>
 
               <br/>
 
               <mat-form-field appearance="outline" style="width: 100%;">
                 <mat-label>Gender</mat-label>
-                <mat-select>
+                <mat-select formControlName="gender">
                   <mat-option value="MALE">Male</mat-option>
                   <mat-option value="FEMALE">Female</mat-option>
+                  <mat-option value="OTHER">Other</mat-option>
                 </mat-select>
               </mat-form-field>
 
@@ -87,23 +66,22 @@ import {BasicUser, UserType} from '../models/Model';
 
               <mat-form-field appearance="outline" style="width: 100%;">
                 <mat-label>Phone Number</mat-label>
-                <input matInput>
-              </mat-form-field>
-
-              <br/>
-
-              <mat-form-field appearance="outline" style="width: 100%;">
-                <mat-label>Description</mat-label>
-                <textarea matInput></textarea>
+                <input matInput formControlName="phoneNumber">
               </mat-form-field>
             </div>
 
           </div>
 
-          <button mat-stroked-button style="font-size: larger; margin-right: 20px;">Save</button>
-          <button mat-stroked-button style="font-size: larger">Reset</button>
+          <mat-form-field appearance="outline" style="width: 100%;">
+            <mat-label>Description</mat-label>
+            <textarea matInput formControlName="description"></textarea>
+          </mat-form-field>
 
-        </div>
+          <button mat-stroked-button style="font-size: larger; margin-right: 20px;" type="submit"
+                  [disabled]="!userForm.valid || isTheSame">Save
+          </button>
+          <button mat-stroked-button [disabled]="isTheSame" (click)="reset()" style="font-size: larger">Reset</button>
+        </form>
       </mat-card>
     </div>`,
   styles: [`
@@ -115,11 +93,29 @@ import {BasicUser, UserType} from '../models/Model';
   `]
 })
 // tslint:disable-next-line:component-class-suffix
-export class AccountPage {
+export class AccountPage implements OnInit {
 
-  public passwordHide = true;
+  public userForm = this.fb.group({
+    displayName: ['', Validators.required],
+    email: ['', Validators.email],
+    address: [''],
+    description: [''],
+    citizenId: ['', Validators.required],
+    gender: ['MALE', Validators.required],
+    phoneNumber: ['', Validators.required]
+  });
 
-  public reenterPasswordHide = true;
+  public reset() {
+    this.userForm.patchValue({
+      displayName: this.user.displayName,
+      email: this.user.email,
+      address: this.user.address,
+      description: this.user.description,
+      citizenId: this.user.citizenId,
+      gender: this.user.gender,
+      phoneNumber: this.user.phoneNumber
+    });
+  }
 
   public get joinedTimestamp(): string {
     return this.user.createdAt.toDate().toUTCString() ?? '[Unknown]';
@@ -141,7 +137,27 @@ export class AccountPage {
     return this.auth.currentUser;
   }
 
-  constructor(public auth: AuthenticationService) {
+  public get isTheSame(): boolean {
+    // tslint:disable-next-line:prefer-const
+    let {displayName, email, address, description, citizenId, gender, phoneNumber} = this.userForm.value;
+    return this.user.displayName === displayName &&
+      this.user.email === email &&
+      this.user.address === address &&
+      this.user.description === description &&
+      this.user.citizenId === citizenId &&
+      this.user.gender === gender &&
+      this.user.phoneNumber === phoneNumber;
+  }
+
+  constructor(public auth: AuthenticationService, public fb: FormBuilder) {
+  }
+
+  ngOnInit(): void {
+    this.reset();
+  }
+
+  public onSubmit() {
+    this.auth.update(this.userForm.value);
   }
 
 

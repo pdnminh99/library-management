@@ -1,8 +1,6 @@
-import {Component, Input} from '@angular/core';
-import {isNullOrUndefined} from 'util';
-import {BookService} from '../authentication/book.service';
-import {BasicBook, Displayable, EntityService} from '../models/Model';
-import {Router} from '@angular/router';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Displayable, EntityService, Filter} from '../models/Model';
+import {PageEvent} from '@angular/material/paginator';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -12,22 +10,38 @@ import {Router} from '@angular/router';
       <div id="left-panel">
         <mat-form-field id="mini-searchbar" appearance="fill">
           <input
+            (keyup.enter)="onSearch.emit($event.target.value)"
             matInput
             type="text"
             placeholder="Search"
           />
-          <button matSuffix mat-icon-button>
+          <button *ngIf="filters.length > 0"
+                  mat-icon-button
+                  [mat-menu-trigger-for]="filtersMenu"
+                  matSuffix>
             <mat-icon>filter_list</mat-icon>
           </button>
+
+          <mat-menu #filtersMenu="matMenu">
+            <button *ngFor="let filter of filters"
+                    (click)="onFilterApply.emit(filter)"
+                    mat-menu-item>
+              <mat-icon *ngIf="filter.filterId == service.selectedFilter?.filterId">check</mat-icon>
+              <mat-icon *ngIf="filter.filterId != service.selectedFilter?.filterId">{{ filter.icon }}</mat-icon>
+              <span>{{ filter.description }}</span>
+            </button>
+          </mat-menu>
         </mat-form-field>
 
         <content-list-component
           [items]="items"
-          id="content-list"></content-list-component>
+          id="content-list"
+        ></content-list-component>
 
         <mat-paginator
-          [length]="100"
-          [pageSize]="10"
+          [length]="service.len"
+          [pageSize]="service.pageSize"
+          (page)="this.onPageTurn.emit($event)"
           style="background-color: transparent; flex: 1"
         ></mat-paginator>
       </div>
@@ -65,23 +79,28 @@ import {Router} from '@angular/router';
     `,
   ],
 })
-export class ContentComponent<T extends A, A extends Displayable> {
+export class ContentComponent<T extends Displayable> {
 
   @Input()
-  public service: EntityService<T, A>;
+  public service: EntityService<T>;
 
-  constructor() {
+  // tslint:disable-next-line:no-output-on-prefix
+  @Output()
+  public onSearch = new EventEmitter<string>();
+
+  // tslint:disable-next-line:no-output-on-prefix
+  @Output()
+  public onFilterApply = new EventEmitter<Filter>();
+
+  // tslint:disable-next-line:no-output-on-prefix
+  @Output()
+  public onPageTurn = new EventEmitter<PageEvent>();
+
+  public get items(): T[] {
+    return this.service.items;
   }
 
-  public get items(): A[] {
-    return this.service.items;
-    // tslint:disable-next-line:triple-equals
-    // if (this.searchValue.trim().length == 0) {
-    //   return this.bookService.items;
-    // }
-    // return this.bookService.items.filter(
-    //   (book) =>
-    //     !isNullOrUndefined(book.title) && book.title.includes(this.searchValue)
-    // );
+  public get filters(): Filter[] {
+    return this.service.filters ?? [];
   }
 }

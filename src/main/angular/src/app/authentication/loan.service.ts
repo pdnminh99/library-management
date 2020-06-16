@@ -1,27 +1,32 @@
 import {Injectable} from '@angular/core';
-import {BasicUser, EntityService, Loan, ToolbarMode} from '../models/Model';
+import {EntityService, Filter, Loan, ToolbarMode} from '../models/Model';
 
 
-@Injectable({providedIn: 'root'})
-export class LoanService implements EntityService<Loan, Loan> {
-
-  public get isLoanActive(): boolean {
-    return this.loan !== undefined;
-  }
+@Injectable({
+  providedIn: 'root'
+})
+export class LoanService implements EntityService<Loan> {
 
   constructor() {
   }
-  public loans: Loan[] = [];
-
-  public loan: Loan;
 
   public isProcessing = false;
 
   isActive: boolean;
-  items: Loan[];
+
+  items: Loan[] = [];
+
   selectedItem: Loan;
 
   public mode: ToolbarMode = ToolbarMode.STATIC;
+
+  filters: Filter[];
+
+  selectedFilter: Filter;
+
+  public pageNumber = 0;
+
+  public pageSize = 10;
 
   delete(): void {
   }
@@ -32,12 +37,18 @@ export class LoanService implements EntityService<Loan, Loan> {
   getAll(): void {
   }
 
-  refresh(): void {
-  }
-
   update(patch: Loan): void {
   }
 
   create(instance: Loan): void {
+  }
+
+  onSearch(key: string): void {
+  }
+
+  apply(filter: Filter): void {
+  }
+
+  pageTurn(page: number): void {
   }
 }

@@ -17,12 +17,12 @@ import {Book} from '../models/Model';
       <div id="detail">
         <h1 style="font-weight: bolder">{{ book.title || "No content" }}</h1>
 
-        <div style="margin-bottom: 10px;">
+        <div *ngIf="book.creatorInstance !== undefined" style="margin-bottom: 10px;">
           <p>Added on {{ createdAtDisplay }} by</p>
           <div style="display: flex; align-items: center; justify-content: flex-start;">
-            <img style="width: 40px; border-radius: 50px; margin-right: 10px;" [src]="book.creator.photoURL"
-                 [alt]="book.creator.displayName">
-            <p style="font-weight: bold; margin: 0;">{{ book.creator.displayName }}</p>
+            <img style="width: 40px; border-radius: 50px; margin-right: 10px;" [src]="book.creatorInstance.photoURL"
+                 [alt]="book.creatorInstance.photoURL">
+            <p style="font-weight: bold; margin: 0;">{{ book.creatorInstance.displayName }}</p>
           </div>
         </div>
 
@@ -81,11 +81,7 @@ export class BookStaticDisplayComponent {
   public book: Book;
 
   public get createdAtDisplay(): string {
-    if (this.book.createdAt === undefined) {
-      return '';
-    }
-    const datetime = new Date(this.book.createdAt);
-    return datetime.toUTCString();
+    return this.book.createdAt.toDate().toUTCString();
   }
 
   public emptyImage = 'https://thumbs.dreamstime.com/b/black-linear-photo-camera-logo-like-no-image-available-black-linear-photo-camera-logo-like-no-image-available-flat-stroke-style-106031126.jpg';

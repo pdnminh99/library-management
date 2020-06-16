@@ -125,9 +125,24 @@ export interface EntityService<T extends A, A extends Displayable> {
 
   get(id: string): void;
 
+  create(instance: T): void;
+
   refresh(): void;
 
   delete(): void;
 
   update(patch: T): void;
+}
+
+export enum MetadataType {
+  AUTHOR = "AUTHOR",
+  GENRE = "GENRE",
+  PUBLISHER = "PUBLISHER"
+}
+
+export interface Metadata {
+  name: string;
+  type: MetadataType;
+  createdAt: Timestamp;
+  count: number;
 }

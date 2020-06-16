@@ -16,7 +16,7 @@ import {MatDialog} from '@angular/material/dialog';
         Create
       </button>
       <button (click)="onEdit.emit()"
-              [disabled]="disableAll"
+              [disabled]="disableAll || !service.isActive"
               mat-flat-button style="margin-right: 10px;">
         <mat-icon>create</mat-icon>
         Edit

@@ -66,4 +66,7 @@ export class MemberService implements EntityService<BasicUser, BasicUser> {
 
   update(patch: BasicUser): void {
   }
+
+  create(instance: BasicUser): void {
+  }
 }

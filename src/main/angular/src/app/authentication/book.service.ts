@@ -1,26 +1,48 @@
 import {Injectable} from '@angular/core';
-import {BasicBook, Book, EntityService, ToolbarMode} from '../models/Model';
+import {BasicBook, Book, EntityService, Metadata, ToolbarMode} from '../models/Model';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {environment} from '../../environments/environment';
 import {Router} from '@angular/router';
+import {AngularFirestore} from '@angular/fire/firestore';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BookService implements EntityService<Book, BasicBook> {
 
+  public authors: Metadata[];
+
+  public genres: Metadata[];
+
+  public publishers: Metadata[];
+
   public get isActive(): boolean {
     return this.selectedItem !== undefined;
   }
 
-  constructor(private http: HttpClient, private router: Router) {
+  constructor(private http: HttpClient, private router: Router, public firestore: AngularFirestore) {
     this.getAll();
     this.router.events.subscribe(_ => {
       const routes = location.pathname.split('/');
-      if (routes[1] === 'resources' && routes.length === 3) {
+      if (routes[1] === 'resources' && routes.length === 3 && this.selectedItem?.bookId !== routes[2]) {
         this.get(routes[2]);
       }
     });
+    this.firestore.collection<Metadata>('metadata_dev', ref => ref
+      .limit(10)
+      .where('type', '==', 'AUTHOR'))
+      .valueChanges()
+      .subscribe(v => this.authors = v);
+    this.firestore.collection<Metadata>('metadata_dev', ref => ref
+      .limit(10)
+      .where('type', '==', 'GENRE'))
+      .valueChanges()
+      .subscribe(v => this.genres = v);
+    this.firestore.collection<Metadata>('metadata_dev', ref => ref
+      .limit(10)
+      .where('type', '==', 'PUBLISHER'))
+      .valueChanges()
+      .subscribe(v => this.publishers = v);
   }
 
   public isProcessing = false;
@@ -89,6 +111,27 @@ export class BookService implements EntityService<Book, BasicBook> {
   }
 
   public update(newVersion: Book) {
+  }
 
+  public create(instance: Book): void {
+
+    const req = {
+      title: instance.title,
+      author: instance.author,
+      description: instance.description,
+      genre: instance.genre,
+      publisher: instance.publisher,
+      yearOfPublishing: instance.yearOfPublishing,
+      count: instance.count,
+      photoURL: instance.photoURL,
+      creator: instance.creator?.userId
+    };
+
+    this.http.post(`${environment.serverURI}/book`, req, {
+      headers: this.corsHeaders
+    }).subscribe(res => {
+      console.log(res);
+      this.refresh();
+    });
   }
 }

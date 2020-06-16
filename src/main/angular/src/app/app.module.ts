@@ -25,6 +25,7 @@ import {MatChipsModule} from '@angular/material/chips';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MAT_DIALOG_DEFAULT_OPTIONS, MatDialogModule} from '@angular/material/dialog';
 import {TextFieldModule} from '@angular/cdk/text-field';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
 
 import {environment} from 'src/environments/environment';
 import {SearchBarComponent} from './components/search-bar.component';
@@ -108,7 +109,8 @@ import {BookFormComponent} from './components/book-form.component';
     MatDialogModule,
     MatDatepickerModule,
     ReactiveFormsModule,
-    TextFieldModule
+    TextFieldModule,
+    MatAutocompleteModule
   ],
   providers: [
     {provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: {hasBackdrop: false}}

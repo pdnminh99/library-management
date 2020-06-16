@@ -29,9 +29,15 @@ import {Book} from '../models/Model';
 
             <mat-form-field appearance="outline" style="width: 100%;">
               <mat-label>Author</mat-label>
-              <input matInput formControlName="author">
+              <input matInput formControlName="author" [matAutocomplete]="authorAutocomplete">
               <mat-icon matSuffix>person</mat-icon>
               <mat-hint>Author must not empty!</mat-hint>
+
+              <mat-autocomplete #authorAutocomplete="matAutocomplete">
+                <mat-option *ngFor="let author of authors" [value]="author">
+                  {{ author }}
+                </mat-option>
+              </mat-autocomplete>
             </mat-form-field>
 
             <br/>
@@ -47,16 +53,28 @@ import {Book} from '../models/Model';
           <div style="flex: 1; margin-left: 10px;">
             <mat-form-field appearance="outline" style="width: 100%;">
               <mat-label>Genre</mat-label>
-              <input matInput formControlName="genre">
+              <input matInput formControlName="genre" [matAutocomplete]="genreAutocomplete">
               <mat-hint>Genre must not empty!</mat-hint>
+
+              <mat-autocomplete #genreAutocomplete="matAutocomplete">
+                <mat-option *ngFor="let genre of genres" [value]="genre">
+                  {{ genre }}
+                </mat-option>
+              </mat-autocomplete>
             </mat-form-field>
 
             <br/>
 
             <mat-form-field appearance="outline" style="width: 100%;">
               <mat-label>Publisher</mat-label>
-              <input matInput formControlName="publisher">
+              <input matInput formControlName="publisher" [matAutocomplete]="publisherAutocomplete">
               <mat-icon matSuffix>location_city</mat-icon>
+
+              <mat-autocomplete #publisherAutocomplete="matAutocomplete">
+                <mat-option *ngFor="let publisher of publishers" [value]="publisher">
+                  {{ publisher }}
+                </mat-option>
+              </mat-autocomplete>
             </mat-form-field>
 
             <br/>
@@ -153,6 +171,15 @@ export class BookFormComponent implements OnInit {
     count: 0,
     photoURL: undefined
   } as Book;
+
+  @Input()
+  public authors: string[] = [];
+
+  @Input()
+  public genres: string[] = [];
+
+  @Input()
+  public publishers: string[] = [];
 
   public bookForm = this.formBuilder.group({
     title: ['', Validators.required],

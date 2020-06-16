@@ -37,4 +37,7 @@ export class LoanService implements EntityService<Loan, Loan> {
 
   update(patch: Loan): void {
   }
+
+  create(instance: Loan): void {
+  }
 }

@@ -54,6 +54,9 @@ import {ViewMemberComponent} from './components/view-member.component';
 import {BookStaticDisplayComponent} from './components/book-static-display.component';
 import {DeleteConfirmDialogComponent} from './components/delete-confirm-dialog.component';
 import {BookFormComponent} from './components/book-form.component';
+import {MemberFormComponent} from './components/member-form.component';
+import {MemberToolbarComponent} from './components/member-toolbar.component';
+import {RoleChangeConfirmComponent} from './components/role-change-confirm.component';
 
 @NgModule({
   declarations: [
@@ -82,7 +85,10 @@ import {BookFormComponent} from './components/book-form.component';
     ViewMemberComponent,
     BookStaticDisplayComponent,
     DeleteConfirmDialogComponent,
-    BookFormComponent
+    BookFormComponent,
+    MemberFormComponent,
+    MemberToolbarComponent,
+    RoleChangeConfirmComponent
   ],
   imports: [
     AngularFireModule.initializeApp(environment.firebase),

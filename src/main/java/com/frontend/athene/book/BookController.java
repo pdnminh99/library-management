@@ -20,39 +20,27 @@ public class BookController {
         this.service = service;
     }
 
-    @GetMapping("{bookId}")
+    @PostMapping("{userId}")
     @CrossOrigin
-    public ResponseEntity<Book> get(@PathVariable String bookId) throws ExecutionException, InterruptedException {
-        Book book = service.get(bookId);
-        return Optional.of(book)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public Book create(@PathVariable String userId, @RequestBody Book book) throws ExecutionException, InterruptedException {
+        return service.create(userId, book);
     }
 
-    @GetMapping
     @CrossOrigin
-    public List<BasicBook> get() throws ExecutionException, InterruptedException {
-        return service.getAll();
-    }
-
-    @PostMapping
-    @CrossOrigin
-    public Book create(@RequestBody Book book) throws ExecutionException, InterruptedException {
-        return service.create(book);
-    }
-
+    @ResponseStatus(HttpStatus.ACCEPTED)
     @DeleteMapping("{bookId}/{userId}")
-    @CrossOrigin
-    public void delete(@PathVariable String bookId, @PathVariable String userId) {
+    public void delete(@PathVariable String bookId, @PathVariable String userId) throws ExecutionException, InterruptedException {
         service.delete(bookId, userId);
     }
 
+    @CrossOrigin
     @PatchMapping("{userId}")
-    public Book patch(@PathVariable String userId, @RequestBody Book book) {
-        return null;
+    public void patch(@PathVariable String userId, @RequestBody Book book) throws ExecutionException, InterruptedException {
+        service.patch(userId, book);
     }
 
-    @ExceptionHandler({ IllegalArgumentException.class })
+    @CrossOrigin
+    @ExceptionHandler({IllegalArgumentException.class})
     @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
     public String handleIllegalArgsExc(IllegalArgumentException exception) {
         return exception.getMessage();

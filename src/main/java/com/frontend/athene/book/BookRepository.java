@@ -1,15 +1,16 @@
 package com.frontend.athene.book;
 
-import com.frontend.athene.user.User;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.cloud.Timestamp;
 import com.google.cloud.firestore.*;
+import com.google.common.collect.Maps;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -54,6 +55,9 @@ public class BookRepository {
         if (!isBatchActive()) {
             resetBatch();
         }
+        var now = Timestamp.now();
+
+        book.setCreatedAt(now);
         if (book.getBookId() == null || book.getBookId().trim().length() == 0) {
             book.setBookId(nextBookId());
         }
@@ -69,29 +73,6 @@ public class BookRepository {
 
     public void flush() {
         batch = null;
-    }
-
-    public void create(String name, MetadataType type) throws ExecutionException, InterruptedException {
-        if (name == null || type == null) {
-            return;
-        }
-        List<QueryDocumentSnapshot> docs = metadataCollection
-                .whereEqualTo("type", type.toString())
-                .whereEqualTo("name", name)
-                .get()
-                .get()
-                .getDocuments();
-        Metadata metadata;
-        if (docs.size() == 0) {
-            metadata = new Metadata(name, 1, type, Timestamp.now());
-            metadataCollection.add(metadata);
-            return;
-        }
-        metadata = docs.get(0).toObject(Metadata.class);
-        int count = metadata.getCount();
-        count += 1;
-        metadataCollection.document(metadata.getMetadataId())
-                .update("count", count);
     }
 
     public List<BasicBook> getAll() throws ExecutionException, InterruptedException {
@@ -111,21 +92,55 @@ public class BookRepository {
                 .toObject(Book.class);
     }
 
-    public List<Metadata> getMetadata(List<String> name, MetadataType type) throws ExecutionException, InterruptedException {
-        return metadataCollection.whereEqualTo("type", type.toString())
-                .whereIn("name", name)
-                .get()
-                .get()
-                .getDocuments()
-                .stream()
-                .map(m -> m.toObject(Metadata.class))
-                .collect(Collectors.toList());
-    }
-
     public User getUser(String userId) throws ExecutionException, InterruptedException {
         return usersCollection.document(userId)
                 .get()
                 .get()
                 .toObject(User.class);
+    }
+
+    public void delete(String bookId) {
+        booksCollection.document(bookId)
+                .delete();
+    }
+
+    public void update(Book book) {
+        Map<String, Object> updateMap = Maps.newHashMap();
+        if (book.getTitle() != null) {
+            updateMap.put("title", book.getTitle());
+        }
+        if (book.getAuthor() != null) {
+            updateMap.put("author", book.getAuthor());
+        }
+        if (book.getDescription() != null) {
+            updateMap.put("description", book.getDescription());
+        }
+        if (book.getGenre() != null) {
+            updateMap.put("genre", book.getGenre());
+        }
+        if (book.getPublisher() != null) {
+            updateMap.put("publisher", book.getPublisher());
+        }
+        if (book.getYearOfPublishing() != null) {
+            updateMap.put("yearOfPublishing", book.getYearOfPublishing());
+        }
+        if (book.getCount() != null) {
+            updateMap.put("count", book.getCount());
+        }
+        if (book.getPhotoURL() != null) {
+            updateMap.put("photoURL", book.getPhotoURL());
+        }
+        if (book.getPhotoURL() != null) {
+            updateMap.put("position", book.getPosition());
+        }
+        booksCollection.document(book.getBookId())
+                .update(updateMap);
+    }
+
+    public boolean isIdExist(String bookId) throws ExecutionException, InterruptedException {
+        return booksCollection.document(bookId)
+                .get()
+                .get()
+                .exists();
     }
 }

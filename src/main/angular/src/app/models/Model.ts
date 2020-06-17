@@ -22,8 +22,14 @@ export class Book implements Displayable {
     public count: number,
     public photoURL: string,
     public createdAt: Timestamp,
-    public creator: string,
-    public creatorInstance: BasicUser) {
+    public creatorId: string,
+    public creator: BasicUser,
+    public prefixId: string,
+    public position: string) {
+  }
+
+  public get subtitle(): string {
+    return this.bookId.toUpperCase();
   }
 
   public get navigate(): string {
@@ -61,6 +67,7 @@ export class BasicUser implements Displayable {
     public type: UserType,
     public address: string,
     public citizenId: string,
+    public description: string,
     public gender: Gender,
     public createdAt: Timestamp) {
   }
@@ -86,7 +93,7 @@ export class BasicUser implements Displayable {
     }
   }
 
-  public get description(): string {
+  public get subtitle(): string {
     return this.type.toString();
   }
 
@@ -109,7 +116,7 @@ export enum DisplayColor {
 
 export interface Displayable {
   title: string;
-  description: string;
+  subtitle: string;
   status: Status;
   navigate: string;
 }
@@ -119,7 +126,14 @@ export class Loan implements Displayable {
   constructor(public loanId: string,
               public title: string,
               public description: string,
-              public isReturned: boolean,
+              public displayName: string,
+              public email: string,
+              public civilianId: string,
+              public address: string,
+              public gender: Gender,
+              public deadline: Timestamp,
+              public returnedAt: Timestamp,
+              public books: Book[],
               public createdAt: Timestamp) {
   }
 
@@ -128,6 +142,10 @@ export class Loan implements Displayable {
       icon: undefined,
       color: DisplayColor.NORMAL
     };
+  }
+
+  public get subtitle(): string {
+    return `Deadline at ${this.deadline?.toDate().toUTCString() ?? '[unknown]'}`;
   }
 
   public get navigate(): string {
@@ -171,19 +189,6 @@ export interface EntityService<T extends Displayable> {
   apply(filter: Filter): void;
 
   pageTurn(page: number): void;
-}
-
-export enum MetadataType {
-  AUTHOR = 'AUTHOR',
-  GENRE = 'GENRE',
-  PUBLISHER = 'PUBLISHER'
-}
-
-export interface Metadata {
-  name: string;
-  type: MetadataType;
-  createdAt: Timestamp;
-  count: number;
 }
 
 export interface Filter {

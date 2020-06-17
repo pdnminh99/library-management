@@ -1,6 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormBuilder, Validators} from '@angular/forms';
 import {Book} from '../models/Model';
+import {MetadataService} from '../authentication/metadata.service';
 
 
 @Component({
@@ -15,7 +16,7 @@ import {Book} from '../models/Model';
            *ngIf="book.photoURL == undefined"
            [src]="emptyImage"
            alt="No image found!">
-      <form id="detail" [formGroup]="bookForm" (ngSubmit)="handleSubmit()">
+      <div id="detail" [formGroup]="bookForm">
         <h1>Book information</h1>
         <div style="display: flex; flex-wrap: wrap;">
           <div style="flex: 1;">
@@ -49,6 +50,19 @@ import {Book} from '../models/Model';
                      formControlName="yearOfPublishing">
             </mat-form-field>
 
+            <br/>
+
+            <mat-form-field appearance="outline" style="width: 100%;">
+              <mat-label>Prefix</mat-label>
+              <input matInput type="text" formControlName="prefixId" [matAutocomplete]="prefixAutocomplete">
+              <mat-hint>Prefix must be 2 or 3 characters only.</mat-hint>
+
+              <mat-autocomplete #prefixAutocomplete="matAutocomplete">
+                <mat-option *ngFor="let prefix of prefixIds" [value]="prefix">
+                  {{ prefix }}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
           </div>
           <div style="flex: 1; margin-left: 10px;">
             <mat-form-field appearance="outline" style="width: 100%;">
@@ -83,6 +97,13 @@ import {Book} from '../models/Model';
               <mat-label>Count</mat-label>
               <input matInput type="number" min="0" formControlName="count">
             </mat-form-field>
+
+            <br/>
+
+            <mat-form-field appearance="outline" style="width: 100%;">
+              <mat-label>Position</mat-label>
+              <input matInput type="text" formControlName="position">
+            </mat-form-field>
           </div>
         </div>
         <mat-form-field appearance="outline" style="width: 100%;">
@@ -103,10 +124,9 @@ import {Book} from '../models/Model';
         </mat-form-field>
         <br/>
 
-
-        <button mat-stroked-button type="submit" [disabled]="isTheSame">Submit</button>
-        <button mat-stroked-button style="margin-left: 10px;" (click)="handleDiscard()">Discard</button>
-      </form>
+        <button (click)="handleSubmit(true)" [disabled]="isTheSame" mat-stroked-button>Submit</button>
+        <button (click)="handleSubmit(false)" mat-stroked-button style="margin-left: 10px;">Discard</button>
+      </div>
     </div>
   `,
   styles: [
@@ -147,7 +167,36 @@ import {Book} from '../models/Model';
 })
 export class BookFormComponent implements OnInit {
 
-  constructor(public formBuilder: FormBuilder) {
+  public get authors(): string[] {
+    return this.getDistinctValues('author');
+  }
+
+  public get publishers(): string[] {
+    return this.getDistinctValues('publisher');
+  }
+
+  public get genres(): string[] {
+    return this.getDistinctValues('genre');
+  }
+
+  public get prefixIds(): string[] {
+    return this.getDistinctValues('prefixId', 'prefixes');
+  }
+
+  constructor(public formBuilder: FormBuilder, private metadataService: MetadataService) {
+  }
+
+  public get isTheSame(): boolean {
+    // tslint:disable-next-line:prefer-const
+    let {title, author, description, genre, publisher, yearOfPublishing, count, photoURL} = this.bookForm.value;
+    return this.book.title === title &&
+      this.book.author === author &&
+      this.book.description === description &&
+      this.book.genre === genre &&
+      this.book.publisher === publisher &&
+      this.book.yearOfPublishing === yearOfPublishing &&
+      this.book.count === count &&
+      this.book.photoURL === photoURL;
   }
 
   public emptyImage = 'https://thumbs.dreamstime.com/b/black-linear-photo-camera-logo-like-no-image-available-black-linear-photo-camera-logo-like-no-image-available-flat-stroke-style-106031126.jpg';
@@ -165,34 +214,15 @@ export class BookFormComponent implements OnInit {
     bookId: null,
     title: '',
     author: '',
-    description: '',
+    subtitle: '',
     genre: '',
     yearOfPublishing: (new Date()).getFullYear(),
     count: 0,
-    photoURL: undefined
+    photoURL: undefined,
+    prefixId: '',
+    position: '',
+    publisher: ''
   } as Book;
-
-  @Input()
-  public authors: string[] = [];
-
-  @Input()
-  public genres: string[] = [];
-
-  @Input()
-  public publishers: string[] = [];
-
-  public get isTheSame(): boolean {
-    // tslint:disable-next-line:prefer-const
-    let {title, author, description, genre, publisher, yearOfPublishing, count, photoURL} = this.bookForm.value;
-    return this.book.title === title &&
-      this.book.author === author &&
-      this.book.description === description &&
-      this.book.genre === genre &&
-      this.book.publisher === publisher &&
-      this.book.yearOfPublishing === yearOfPublishing &&
-      this.book.count === count &&
-      this.book.photoURL === photoURL;
-  }
 
   public bookForm = this.formBuilder.group({
     title: ['', Validators.required],
@@ -202,8 +232,19 @@ export class BookFormComponent implements OnInit {
     publisher: [''],
     yearOfPublishing: [new Date().getFullYear()],
     count: [0],
-    photoURL: ['']
+    photoURL: [''],
+    position: [''],
+    prefixId: ['']
   });
+
+  private getDistinctValues(key: string, pluralKey: string = `${key}s`) {
+    const value = this.bookForm.value[key].toLowerCase();
+    if (value.length === 0) {
+      return this.metadataService[pluralKey].slice(0, 10);
+    }
+    return this.metadataService[pluralKey]
+      .filter(a => a.toLowerCase().includes(value));
+  }
 
   ngOnInit(): void {
     this.bookForm.patchValue({
@@ -214,15 +255,17 @@ export class BookFormComponent implements OnInit {
       publisher: this.book.publisher,
       yearOfPublishing: this.book.yearOfPublishing,
       count: this.book.count,
-      photoURL: this.book.photoURL
+      photoURL: this.book.photoURL,
+      prefixId: this.book.prefixId,
+      position: this.book.position
     });
   }
 
-  handleSubmit() {
-    this.onSubmit.emit(this.bookForm.value as Book);
-  }
-
-  handleDiscard() {
-    this.onDiscard.emit();
+  public handleSubmit(containsChanges: boolean) {
+    if (!containsChanges) {
+      this.onDiscard.emit();
+    } else {
+      this.onSubmit.emit(this.bookForm.value as Book);
+    }
   }
 }

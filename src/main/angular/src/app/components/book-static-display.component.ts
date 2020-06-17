@@ -17,12 +17,12 @@ import {Book} from '../models/Model';
       <div id="detail">
         <h1 style="font-weight: bolder">{{ book.title || "No content" }}</h1>
 
-        <div *ngIf="book.creatorInstance !== undefined" style="margin-bottom: 10px;">
+        <div *ngIf="book.creator !== undefined" style="margin-bottom: 10px;">
           <p>Added on {{ createdAtDisplay }} by</p>
           <div style="display: flex; align-items: center; justify-content: flex-start;">
-            <img style="width: 40px; border-radius: 50px; margin-right: 10px;" [src]="book.creatorInstance.photoURL"
-                 [alt]="book.creatorInstance.photoURL">
-            <p style="font-weight: bold; margin: 0;">{{ book.creatorInstance.displayName }}</p>
+            <img style="width: 40px; border-radius: 50px; margin-right: 10px;" [src]="book.creator.photoURL"
+                 [alt]="book.creator.photoURL">
+            <p style="font-weight: bold; margin: 0;">{{ book.creator.displayName }}</p>
           </div>
         </div>
 
@@ -30,13 +30,30 @@ import {Book} from '../models/Model';
         <p style="text-align: justify">{{ book.description }}</p>
 
         <div style="display: flex; flex-wrap: wrap;">
-          <book-status-component style="margin: 3px 5px;" title="Author" [content]="book.author"></book-status-component>
-          <book-status-component style="margin: 0 5px;" title="Count"
+          <book-status-component *ngIf="book.author?.length > 0"
+                                 style="margin: 3px 5px;"
+                                 title="Author"
+                                 [content]="book.author"
+          ></book-status-component>
+          <book-status-component *ngIf="book.count?.toString()?.length > 0"
+                                 style="margin: 0 5px;"
+                                 title="Count"
                                  [content]="book.count.toString()"></book-status-component>
-          <book-status-component style="margin: 0 5px;" title="Genre" [content]="book.genre"></book-status-component>
-          <book-status-component style="margin: 0 5px;" title="Publisher" [content]="book.publisher"></book-status-component>
-          <book-status-component style="margin: 0 5px;" title="Year"
-                                 [content]="book.yearOfPublishing.toString()"></book-status-component>
+          <book-status-component *ngIf="book.genre?.length > 0"
+                                 style="margin: 0 5px;"
+                                 title="Genre"
+                                 [content]="book.genre"
+          ></book-status-component>
+          <book-status-component *ngIf="book.publisher?.length > 0"
+                                 style="margin: 0 5px;"
+                                 title="Publisher"
+                                 [content]="book.publisher"
+          ></book-status-component>
+          <book-status-component *ngIf="book.yearOfPublishing?.toString()?.length > 0"
+                                 style="margin: 0 5px;"
+                                 title="Year"
+                                 [content]="book.yearOfPublishing.toString()"
+          ></book-status-component>
         </div>
       </div>
     </div>

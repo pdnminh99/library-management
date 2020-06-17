@@ -53,11 +53,6 @@ import {DisplayColor, Status} from '../models/Model';
       .content-card-primary {
         color: #fe9e16;
       }
-
-      .content-card:hover {
-        background-color: #e3edfd;
-        color: #236ed4;
-      }
     `,
   ],
 })

@@ -1,9 +1,11 @@
 import {Injectable} from '@angular/core';
-import {Book, EntityService, Filter, Metadata, ToolbarMode} from '../models/Model';
+import {Book, DisplayColor, EntityService, Filter, ToolbarMode} from '../models/Model';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {environment} from '../../environments/environment';
 import {AngularFirestore} from '@angular/fire/firestore';
 import {MemberService} from './member.service';
+import {AuthenticationService} from './authentication.service';
+import {Router} from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -16,38 +18,27 @@ export class BookService implements EntityService<Book> {
 
   constructor(private http: HttpClient,
               private firestore: AngularFirestore,
-              public memberService: MemberService) {
+              private router: Router,
+              public memberService: MemberService,
+              public auth: AuthenticationService) {
     this.getAll();
-    this.firestore.collection<Metadata>('metadata_dev', ref => ref
-      .where('type', '==', 'AUTHOR'))
-      .valueChanges()
-      .subscribe(v => this.authors = v);
-    this.firestore.collection<Metadata>('metadata_dev', ref => ref
-      .where('type', '==', 'GENRE'))
-      .valueChanges()
-      .subscribe(v => this.genres = v);
-    this.firestore.collection<Metadata>('metadata_dev', ref => ref
-      .where('type', '==', 'PUBLISHER'))
-      .valueChanges()
-      .subscribe(v => this.publishers = v);
   }
 
   public get items(): Book[] {
     if (this.currentKey.length === 0) {
-      return this._items.slice(this.pageNumber * this.pageSize > 0 ? this.pageNumber * this.pageSize - 1 : 0, this.pageSize);
+      return this._items
+        .filter(value => BookService.filterByFilterMethod(this.selectedFilter.filterId, value))
+        .slice(this.pageNumber * this.pageSize > 0 ? this.pageNumber * this.pageSize - 1 : 0, this.pageSize);
     }
-    const key = this.currentKey.toLowerCase();
-    return this._items.filter(item => {
-      return item.title?.toLowerCase().includes(key) || item.creatorInstance?.displayName?.toLowerCase().includes(key) ||
-        item.genre?.toLowerCase().includes(key) || item.publisher?.toLowerCase().includes(key) || item.author?.toLowerCase().includes(key);
-    }).slice(this.pageNumber * this.pageSize > 0 ? this.pageNumber * this.pageSize - 1 : 0, this.pageSize);
+    return this._items
+      .filter(i => this.filterByKey(this.currentKey, i))
+      .filter(value => BookService.filterByFilterMethod(this.selectedFilter.filterId, value))
+      .slice(this.pageNumber * this.pageSize > 0 ? this.pageNumber * this.pageSize - 1 : 0, this.pageSize);
   }
 
-  public authors: Metadata[];
-
-  public genres: Metadata[];
-
-  public publishers: Metadata[];
+  public get len(): number {
+    return this._items.length;
+  }
 
   private currentKey = '';
 
@@ -61,10 +52,6 @@ export class BookService implements EntityService<Book> {
 
   // tslint:disable-next-line:variable-name
   public _items: Book[] = [];
-
-  public get len(): number {
-    return this._items.length;
-  }
 
   // tslint:disable-next-line:variable-name
   public selectedItem: Book;
@@ -92,9 +79,31 @@ export class BookService implements EntityService<Book> {
 
   public pageSize = 10;
 
+  private static filterByFilterMethod(index: number, value: Book) {
+    switch (index) {
+      case 1:
+        return value.status.color === DisplayColor.PRIMARY;
+      case 2:
+        return value.status.color === DisplayColor.WARN;
+      case 0:
+      default:
+        return true;
+    }
+  }
+
+  public filterByKey(key: string, item: Book): boolean {
+    key = key.toLowerCase();
+
+    return item.title?.toLowerCase().includes(key) ||
+      item.creator?.displayName?.toLowerCase().includes(key) ||
+      item.genre?.toLowerCase().includes(key) ||
+      item.publisher?.toLowerCase().includes(key) ||
+      item.author?.toLowerCase().includes(key);
+  }
+
   public getAll(): void {
     this.isProcessing = true;
-    this.firestore.collection<Book>('books_dev')
+    this.firestore.collection<Book>('books')
       .snapshotChanges()
       .subscribe(value => {
         const data = value.map(v => v.payload.doc);
@@ -110,8 +119,10 @@ export class BookService implements EntityService<Book> {
             v.data().count,
             v.data().photoURL,
             v.data().createdAt,
-            v.data().creator,
-            undefined);
+            v.data().creatorId,
+            undefined,
+            v.data().prefixId,
+            v.data().position);
         });
         this.isProcessing = false;
       });
@@ -122,22 +133,36 @@ export class BookService implements EntityService<Book> {
       if (book.bookId === bookId) {
         this.selectedItem = book;
         for (const member of this.memberService.items) {
-          if (this.selectedItem.creator === member.userId) {
-            this.selectedItem.creatorInstance = member;
+          if (this.selectedItem.creatorId === member.userId) {
+            this.selectedItem.creator = member;
             break;
           }
         }
-        break;
+        return;
       }
     }
+    this.firestore.collection<Book>('books')
+      .doc(bookId)
+      .get()
+      .subscribe(value => {
+        this.selectedItem = value.data() as Book;
+        this.selectedItem.bookId = value.id;
+        for (const member of this.memberService.items) {
+          if (this.selectedItem.creatorId === member.userId) {
+            this.selectedItem.creator = member;
+            break;
+          }
+        }
+      });
   }
 
   public delete() {
-    if (this.selectedItem === undefined) {
+    if (this.selectedItem === undefined || !this.auth.isLoggedIn) {
       return;
     }
+    this.isProcessing = true;
     const bookIdToRemove = this.selectedItem.bookId;
-    this.http.delete(`${environment.serverURI}/book/${bookIdToRemove}`, {
+    this.http.delete(`${environment.serverURI}/book/${bookIdToRemove}/${this.auth.currentUser.userId}`, {
       headers: this.corsHeaders,
     })
       .subscribe(_ => {
@@ -147,28 +172,69 @@ export class BookService implements EntityService<Book> {
             this.items.splice(index, 1);
           }
         }
+        this.isProcessing = false;
+        if (this.items.length > 0) {
+          this.router.navigate(['resources', this.items[0].bookId]).then(() => {
+            this.selectedItem = this.items[0];
+          });
+        } else {
+          this.router.navigate(['resources']).then(() => {
+          });
+        }
       });
   }
 
-  public update(newVersion: Book) {
-  }
-
-  public create(instance: Book): void {
+  public update(instance: Book) {
     const req = {
+      bookId: instance.bookId,
       title: instance.title,
       author: instance.author,
-      description: instance.description,
       genre: instance.genre,
       publisher: instance.publisher,
       yearOfPublishing: instance.yearOfPublishing,
-      count: instance.count,
       photoURL: instance.photoURL,
-      creator: instance.creator
+      description: instance.description,
+      prefixId: instance.prefixId,
+      count: instance.count,
+      position: instance.position
     };
 
-    this.http.post(`${environment.serverURI}/book`, req, {
+    this.isProcessing = true;
+    this.http.patch(`${environment.serverURI}/book/${this.auth.currentUser.userId}`, req, {
+      headers: this.corsHeaders
+    }).subscribe({
+      next: value => {
+        this.isProcessing = false;
+      },
+      error: err => {
+        console.log(err);
+      }
+    });
+  }
+
+  public create(instance: Book): void {
+    if (this.auth.currentUser === undefined) {
+      return;
+    }
+
+    const req = {
+      title: instance.title,
+      author: instance.author,
+      genre: instance.genre,
+      publisher: instance.publisher,
+      yearOfPublishing: instance.yearOfPublishing,
+      photoURL: instance.photoURL,
+      description: instance.description,
+      prefixId: instance.prefixId,
+      count: instance.count,
+      position: instance.position
+    };
+
+    this.isProcessing = true;
+    this.http.post(`${environment.serverURI}/book/${this.auth.currentUser.userId}`, req, {
       headers: this.corsHeaders
     }).subscribe(res => {
+      this.isProcessing = false;
     });
   }
 
@@ -177,6 +243,7 @@ export class BookService implements EntityService<Book> {
   }
 
   public apply(filter: Filter): void {
+    this.selectedFilter = filter;
   }
 
   public pageTurn(page: number): void {

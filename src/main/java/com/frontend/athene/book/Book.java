@@ -3,7 +3,6 @@ package com.frontend.athene.book;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSetter;
-import com.frontend.athene.user.User;
 import com.google.cloud.Timestamp;
 import com.google.cloud.firestore.annotation.Exclude;
 import com.google.cloud.firestore.annotation.PropertyName;
@@ -21,6 +20,10 @@ public class Book extends BasicBook {
     private Integer count;
 
     private String photoURL;
+
+    private String position;
+
+    private String prefixId;
 
     @Exclude
     private User creator;
@@ -88,7 +91,7 @@ public class Book extends BasicBook {
     }
 
     @JsonIgnore
-    @PropertyName("creator")
+    @PropertyName("creatorId")
     public String getCreatorId() {
         return creator == null ? null : creator.getUserId();
     }
@@ -130,5 +133,21 @@ public class Book extends BasicBook {
 
     public void setPhotoURL(String photoURL) {
         this.photoURL = photoURL;
+    }
+
+    public String getPosition() {
+        return position;
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
+    }
+
+    public String getPrefixId() {
+        return prefixId;
+    }
+
+    public void setPrefixId(String prefixId) {
+        this.prefixId = prefixId;
     }
 }

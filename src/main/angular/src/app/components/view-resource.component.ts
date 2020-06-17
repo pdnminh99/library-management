@@ -3,7 +3,7 @@ import {BookService} from '../authentication/book.service';
 import {Book, ToolbarMode} from '../models/Model';
 import {AuthenticationService} from '../authentication/authentication.service';
 import {HttpClient} from '@angular/common/http';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -11,7 +11,8 @@ import {ActivatedRoute} from '@angular/router';
   template: `
     <div style="display: flex; flex-direction: column; align-items: center;">
       <toolbar-component
-        (onDelete)="bookService.delete()"
+        *ngIf="isStaticMode"
+        (onDelete)="handleDeleteEvent()"
         (onCreate)="handleCreateEvent()"
         (onEdit)="handleEditEvent()"
         [service]="bookService"
@@ -21,19 +22,17 @@ import {ActivatedRoute} from '@angular/router';
         *ngIf="bookService.isActive && isStaticMode"
         [book]="book"></book-static-display-component>
 
-      <book-form-component (onSubmit)="submit($event)"
-                           *ngIf="isCreateMode"
-                           [genres]="genres"
-                           [authors]="authors"
-                           [publishers]="publishers"
-                           id="content-detail"></book-form-component>
-      <book-form-component (onDiscard)="discard()"
-                           *ngIf="isEditMode"
-                           [genres]="genres"
-                           [authors]="authors"
-                           [publishers]="publishers"
-                           [book]="book"
-                           id="content-detail"></book-form-component>
+      <book-form-component
+        (onSubmit)="submit($event)"
+        (onDiscard)="discard()"
+        *ngIf="isCreateMode"
+        id="content-detail"></book-form-component>
+      <book-form-component
+        (onSubmit)="submit($event)"
+        (onDiscard)="discard()"
+        *ngIf="isEditMode"
+        [book]="book"
+        id="content-detail"></book-form-component>
     </div>
   `,
   styles: [`
@@ -56,18 +55,6 @@ import {ActivatedRoute} from '@angular/router';
 })
 export class ViewResourceComponent {
 
-  public get authors(): string[] {
-    return this.bookService.authors.map(a => a.name);
-  }
-
-  public get publishers(): string[] {
-    return this.bookService.publishers.map(a => a.name);
-  }
-
-  public get genres(): string[] {
-    return this.bookService.genres.map(a => a.name);
-  }
-
   public get book(): Book {
     return this.bookService.selectedItem;
   }
@@ -87,12 +74,15 @@ export class ViewResourceComponent {
   constructor(
     public bookService: BookService,
     public auth: AuthenticationService,
+    public router: Router,
     public route: ActivatedRoute,
     public http: HttpClient) {
     this.route.params.subscribe(value => {
-      console.log(value.bookId);
       if (value.bookId !== undefined) {
         this.bookService.get(value.bookId);
+      } else if (this.bookService.items.length > 0) {
+        this.router.navigate(['resources', this.bookService.items[0].bookId]).then(() => {
+        });
       } else {
         this.bookService.selectedItem = undefined;
       }
@@ -107,14 +97,30 @@ export class ViewResourceComponent {
     this.bookService.mode = ToolbarMode.EDIT;
   }
 
+  public handleDeleteEvent() {
+    this.bookService.delete();
+    // if (this.bookService.items.length > 0) {
+    //   this.router.navigateByUrl(`resources/${this.bookService.items[0].bookId}`).then(() => {
+    //   });
+    // } else {
+    //   this.router.navigate(['resources']).then(() => {
+    //   });
+    //   this.bookService.selectedItem = undefined;
+    // }
+  }
+
   public submit(book: Book) {
     if (this.auth.currentUser === undefined) {
       return;
     }
-    book.creator = this.auth.currentUser.userId;
-    book.creatorInstance = this.auth.currentUser;
+    book.creatorId = this.auth.currentUser.userId;
+    book.creator = this.auth.currentUser;
 
-    this.bookService.create(book);
+    if (this.bookService.mode === ToolbarMode.CREATE) {
+      this.bookService.create(book);
+    } else {
+      this.bookService.update(book);
+    }
     this.bookService.mode = ToolbarMode.STATIC;
   }
 

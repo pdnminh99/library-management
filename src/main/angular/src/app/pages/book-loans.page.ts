@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {LoanService} from '../authentication/loan.service';
 
 @Component({
@@ -13,8 +13,12 @@ import {LoanService} from '../authentication/loan.service';
   `
 })
 // tslint:disable-next-line:component-class-suffix
-export class BookLoansPage {
+export class BookLoansPage implements OnInit {
 
   constructor(public loanService: LoanService) {
+  }
+
+  ngOnInit(): void {
+    this.loanService.onSearch('');
   }
 }

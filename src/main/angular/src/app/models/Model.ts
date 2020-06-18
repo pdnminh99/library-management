@@ -124,7 +124,7 @@ export interface Displayable {
 export class Loan implements Displayable {
 
   constructor(public loanId: string,
-              public title: string,
+              public userId: string,
               public description: string,
               public displayName: string,
               public email: string,
@@ -135,6 +135,10 @@ export class Loan implements Displayable {
               public returnedAt: Timestamp,
               public books: Book[],
               public createdAt: Timestamp) {
+  }
+
+  public get title(): string {
+    return this.displayName;
   }
 
   public get status(): Status {

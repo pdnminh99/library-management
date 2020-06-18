@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Book, EntityService, Filter, Loan, ToolbarMode} from '../models/Model';
+import {EntityService, Filter, Loan, ToolbarMode} from '../models/Model';
 import {AuthenticationService} from './authentication.service';
 import {BookService} from './book.service';
 import {HttpClient} from '@angular/common/http';
@@ -131,5 +131,11 @@ export class LoanService implements EntityService<Loan> {
 
   pageTurn(page: number): void {
     this.pageNumber = page;
+  }
+
+  returnResources(): void {
+    if (this.selectedItem.returnedAt === undefined) {
+      return;
+    }
   }
 }

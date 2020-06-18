@@ -7,6 +7,7 @@ import {BookLoansPage} from './pages/book-loans.page';
 import {AccountPage} from './pages/account.page';
 import {ViewResourceComponent} from './components/view-resource.component';
 import {ViewMemberComponent} from './components/view-member.component';
+import {ViewLoanComponent} from './components/view-loan.component';
 
 const routes: Routes = [
   {
@@ -57,6 +58,20 @@ const routes: Routes = [
   {
     path: 'loans',
     component: BookLoansPage,
+    children: [
+      {
+        path: '',
+        component: ViewLoanComponent,
+      },
+      {
+        path: ':loanId',
+        component: ViewLoanComponent,
+      },
+      {
+        path: '*',
+        redirectTo: '',
+      },
+    ],
   },
   {
     path: 'account',

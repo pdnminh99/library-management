@@ -25,11 +25,6 @@ export class NavigationService {
     isActive: false
   }, {
     id: 3,
-    navigation: 'loans',
-    icon: 'assignments',
-    isActive: false
-  }, {
-    id: 4,
     navigation: 'account',
     icon: 'person',
     isActive: false
@@ -45,7 +40,7 @@ export class NavigationService {
       case UserType.MEMBER:
       case UserType.GUEST:
       default:
-        return [this._sideNavButtons[0], this._sideNavButtons[4]];
+        return [this._sideNavButtons[0], this._sideNavButtons[3]];
     }
   }
 

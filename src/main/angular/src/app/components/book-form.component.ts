@@ -9,13 +9,13 @@ import {MetadataService} from '../authentication/metadata.service';
   selector: 'book-form-component',
   template: `
     <div id="content-detail">
-      <img class="book-cover" *ngIf="book.photoURL != undefined"
-           [src]="book.photoURL"
-           [alt]="book.title">
       <img class="book-cover"
-           *ngIf="book.photoURL == undefined"
-           [src]="emptyImage"
-           alt="No image found!">
+           [src]="displayURL"
+           [alt]="book.title">
+      <!--      <img class="book-cover"-->
+      <!--           *ngIf="book.photoURL == undefined"-->
+      <!--           [src]="emptyImage"-->
+      <!--           alt="No image found!">-->
       <div id="detail" [formGroup]="bookForm">
         <h1>Book information</h1>
         <div style="display: flex; flex-wrap: wrap;">
@@ -124,7 +124,7 @@ import {MetadataService} from '../authentication/metadata.service';
         </mat-form-field>
         <br/>
 
-        <button (click)="handleSubmit(true)" [disabled]="isTheSame" mat-stroked-button>Submit</button>
+        <button (click)="handleSubmit(true)" [disabled]="isTheSame || !bookForm.valid" mat-stroked-button>Submit</button>
         <button (click)="handleSubmit(false)" mat-stroked-button style="margin-left: 10px;">Discard</button>
       </div>
     </div>
@@ -166,6 +166,11 @@ import {MetadataService} from '../authentication/metadata.service';
   ]
 })
 export class BookFormComponent implements OnInit {
+
+  public get displayURL(): string {
+    const photo = this.bookForm.value.photoURL;
+    return BookFormComponent.checkURL(photo) ? photo : this.emptyImage;
+  }
 
   public get authors(): string[] {
     return this.getDistinctValues('author');
@@ -234,8 +239,12 @@ export class BookFormComponent implements OnInit {
     count: [0],
     photoURL: [''],
     position: [''],
-    prefixId: ['']
+    prefixId: ['', [Validators.maxLength(4), Validators.minLength(3)]]
   });
+
+  private static checkURL(url?: string): boolean {
+    return (url?.match(/\.(jpeg|jpg|gif|png)$/) != null);
+  }
 
   private getDistinctValues(key: string, pluralKey: string = `${key}s`) {
     const value = this.bookForm.value[key].toLowerCase();

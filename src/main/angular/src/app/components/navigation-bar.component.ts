@@ -3,6 +3,8 @@ import {AuthenticationService} from '../authentication/authentication.service';
 import {SearchService} from '../authentication/search.service';
 import {isNullOrUndefined} from 'util';
 import {UserType} from '../models/Model';
+import {MatDialog} from '@angular/material/dialog';
+import {LoginCardComponent} from './login-card.component';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -130,7 +132,10 @@ export class NavigationComponent {
   }
 
   public signIn(): void {
-    this.auth.signIn();
+    const dialogRef = this.dialog.open(LoginCardComponent);
+    dialogRef.afterClosed().subscribe(v => {
+    });
+    // this.auth.signIn();
   }
 
   public signOut(): void {
@@ -139,7 +144,8 @@ export class NavigationComponent {
 
   constructor(
     public auth: AuthenticationService,
-    private searchService: SearchService
+    private searchService: SearchService,
+    public dialog: MatDialog
   ) {
   }
 }

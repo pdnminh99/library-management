@@ -102,7 +102,7 @@ export class MemberFormComponent {
     email: ['', Validators.email],
     address: [''],
     description: [''],
-    citizenId: ['', Validators.required],
+    citizenId: [''],
     gender: ['MALE', Validators.required],
     phoneNumber: ['', Validators.required],
     type: [UserType.GUEST, Validators.required]

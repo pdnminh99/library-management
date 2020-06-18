@@ -10,6 +10,7 @@ import {ActivatedRoute, Router} from '@angular/router';
   selector: 'view-resource-component',
   template: `
     <div style="display: flex; flex-direction: column; align-items: center;">
+      <mat-progress-bar *ngIf="bookService.isProcessing" mode="query"></mat-progress-bar>
       <toolbar-component
         *ngIf="isStaticMode"
         (onDelete)="handleDeleteEvent()"

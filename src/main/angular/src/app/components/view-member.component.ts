@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
 import {MemberService} from '../authentication/member.service';
-import {BasicUser, ToolbarMode, UserType} from '../models/Model';
+import {UserType} from '../models/Model';
 import {ActivatedRoute, Router} from '@angular/router';
 
 
@@ -9,6 +9,7 @@ import {ActivatedRoute, Router} from '@angular/router';
   selector: 'view-member-component',
   template: `
     <div>
+      <mat-progress-bar *ngIf="memberService.isProcessing" mode="query"></mat-progress-bar>
       <member-toolbar-component
         (onRoleChange)="handleEdit($event)"
         [service]="memberService"

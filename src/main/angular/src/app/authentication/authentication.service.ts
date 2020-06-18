@@ -5,8 +5,9 @@ import {auth, User} from 'firebase';
 import {isNullOrUndefined} from 'util';
 import {Observable, Subscription} from 'rxjs';
 import {AngularFirestore, AngularFirestoreDocument} from '@angular/fire/firestore';
-import {BasicUser, DisplayColor, UserType} from '../models/Model';
+import {BasicUser, UserType} from '../models/Model';
 import Timestamp = firebase.firestore.Timestamp;
+import {Router} from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -38,7 +39,8 @@ export class AuthenticationService {
 
   constructor(
     private firebaseAuth: AngularFireAuth,
-    private firestore: AngularFirestore
+    private firestore: AngularFirestore,
+    private router: Router
   ) {
     this.userObservable = firebaseAuth.user;
     this.userObservable.subscribe(async (user) => {
@@ -51,16 +53,20 @@ export class AuthenticationService {
     });
   }
 
-  public signIn(): void {
-    this.firebaseAuth
+  public signInWithGoogleAccount(): Promise<void> {
+    this._isProcessing = true;
+    return this.firebaseAuth
       .signInWithPopup(new auth.GoogleAuthProvider())
       .then(user => {
         this.currentUserDoc = this.firestore.collection('users')
           .doc<BasicUser>(user.user.uid);
         return user.user;
       })
-      .then(this.handleUserInfo)
-      .then(_ => console.log('User login successfully!'));
+      .then()
+      .then(u => this.handleUserInfo(u))
+      .then(_ => {
+        this._isProcessing = false;
+      });
   }
 
   private async handleUserInfo(user: User): Promise<void> {
@@ -97,47 +103,71 @@ export class AuthenticationService {
       this.currentUserDoc = null;
       this.userSubscription?.unsubscribe();
       this.userSubscription = null;
+      this.router.navigate(['dashboard']).then(_ => {
+      });
     });
   }
 
-  // public signIn(
-  //   email: string,
-  //   password: string,
-  //   onSuccess?: (user: User) => void,
-  //   onError?: (reason: string) => void
-  // ): void {
-  //   this._isProcessing = true;
-  //   this.firebaseAuth
-  //     .signInWithEmailAndPassword(email, password)
-  //     .then((user) => {
-  //       if (isNullOrUndefined(user.user)) {
-  //         throw new Error("User not found.");
-  //       }
-  //       onSuccess(user.user);
-  //       this._currentUser = user.user;
-  //       return user.user;
-  //     })
-  //     .catch((err) => {
-  //       onError(err);
-  //     })
-  //     .finally(() => {
-  //       this._isProcessing = false;
-  //     });
-  // }
+  public signIn(
+    email: string,
+    password: string
+  ): Promise<boolean> {
+    this._isProcessing = true;
+    return this.firebaseAuth
+      .signInWithEmailAndPassword(email, password)
+      .then((user) => {
+        if (user.user === undefined) {
+          throw new Error('User not found!');
+        }
+        this.currentUserDoc = this.firestore.collection('users')
+          .doc<BasicUser>(user.user.uid);
+        return this.handleUserInfo(user.user);
+      })
+      .then(_ => true)
+      .catch(_ => false)
+      .finally(() => {
+        this._isProcessing = false;
+      });
+  }
 
-  // public signUp(email: string, password: string): void {
-  //   this.firebaseAuth
-  //     .createUserWithEmailAndPassword(email, password)
-  //     .then((user) => {
-  //       this.currentUser = user.user;
-  //     });
-  // }
+  public signUp(email: string, password: string, displayName: string, photoURL: string): Promise<boolean> {
+    this._isProcessing = true;
+    return this.firebaseAuth
+      .createUserWithEmailAndPassword(email, password)
+      .then((user) => {
+        if (user.user === undefined) {
+          throw new Error('User not found!');
+        }
+        this.currentUserDoc = this.firestore.collection('users')
+          .doc<BasicUser>(user.user.uid);
+        return this.currentUserDoc.get()
+          .toPromise();
+      })
+      .then(v => {
+        if (!v.exists) {
+          this._currentUser = {
+            userId: v.id,
+            displayName,
+            photoURL,
+            email,
+            phoneNumber: undefined,
+            type: UserType.GUEST,
+            address: null,
+            citizenId: null,
+            createdAt: Timestamp.now()
+          } as BasicUser;
+          return this.currentUserDoc.set(this._currentUser);
+        } else {
+          this._currentUser = v.data() as BasicUser;
+        }
+      })
+      .then(_ => true)
+      .catch(_ => false)
+      .finally(() => {
+        this._isProcessing = false;
+      });
+  }
 
-  // public logout(): void {
-  //   this.firebaseAuth.signOut().then(() => {
-  //     router
-  //   });
-  // }
   update(newInfo: BasicUser) {
     console.log(newInfo);
     this.firestore.collection('users').doc(this._currentUser.userId)

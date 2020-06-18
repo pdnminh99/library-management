@@ -26,6 +26,7 @@ import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MAT_DIALOG_DEFAULT_OPTIONS, MatDialogModule} from '@angular/material/dialog';
 import {TextFieldModule} from '@angular/cdk/text-field';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import {MatProgressBarModule} from '@angular/material/progress-bar';
 
 import {environment} from 'src/environments/environment';
 import {SearchBarComponent} from './components/search-bar.component';
@@ -57,6 +58,10 @@ import {BookFormComponent} from './components/book-form.component';
 import {MemberFormComponent} from './components/member-form.component';
 import {MemberToolbarComponent} from './components/member-toolbar.component';
 import {RoleChangeConfirmComponent} from './components/role-change-confirm.component';
+import {ViewLoanComponent} from './components/view-loan.component';
+import {LoanToolbarComponent} from './components/loan-toolbar.component';
+import {LoanDeleteConfirmComponent} from './components/loan-delete-confirm.component';
+import {LoanFormComponent} from './components/loan-form.component';
 
 @NgModule({
   declarations: [
@@ -88,7 +93,11 @@ import {RoleChangeConfirmComponent} from './components/role-change-confirm.compo
     BookFormComponent,
     MemberFormComponent,
     MemberToolbarComponent,
-    RoleChangeConfirmComponent
+    RoleChangeConfirmComponent,
+    ViewLoanComponent,
+    LoanToolbarComponent,
+    LoanDeleteConfirmComponent,
+    LoanFormComponent
   ],
   imports: [
     AngularFireModule.initializeApp(environment.firebase),
@@ -116,10 +125,11 @@ import {RoleChangeConfirmComponent} from './components/role-change-confirm.compo
     MatDatepickerModule,
     ReactiveFormsModule,
     TextFieldModule,
-    MatAutocompleteModule
+    MatAutocompleteModule,
+    MatProgressBarModule
   ],
   providers: [
-    {provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: {hasBackdrop: false}}
+    {provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: {hasBackdrop: true}}
   ],
   bootstrap: [AppRoot],
 })

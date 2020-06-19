@@ -8,6 +8,7 @@ import {AccountPage} from './pages/account.page';
 import {ViewResourceComponent} from './components/view-resource.component';
 import {ViewMemberComponent} from './components/view-member.component';
 import {ViewLoanComponent} from './components/view-loan.component';
+import {AdminGuard} from './guards/admin.guard';
 
 const routes: Routes = [
   {
@@ -22,60 +23,72 @@ const routes: Routes = [
   {
     path: 'resources',
     component: ResourcePage,
+    canActivate: [AdminGuard],
     children: [
       {
         path: '',
         component: ViewResourceComponent,
+        canActivate: [AdminGuard],
       },
       {
         path: ':bookId',
         component: ViewResourceComponent,
+        canActivate: [AdminGuard],
       },
       {
         path: '*',
         redirectTo: '',
+        canActivate: [AdminGuard]
       },
     ],
   },
   {
     path: 'members',
     component: MembersPage,
+    canActivate: [AdminGuard],
     children: [
       {
         path: '',
         component: ViewMemberComponent,
+        canActivate: [AdminGuard],
       },
       {
         path: ':memberId',
         component: ViewMemberComponent,
+        canActivate: [AdminGuard],
       },
       {
         path: '*',
         redirectTo: '',
+        canActivate: [AdminGuard],
       },
     ],
   },
   {
     path: 'loans',
     component: BookLoansPage,
+    canActivate: [AdminGuard],
     children: [
       {
         path: '',
         component: ViewLoanComponent,
+        canActivate: [AdminGuard],
       },
       {
         path: ':loanId',
         component: ViewLoanComponent,
+        canActivate: [AdminGuard],
       },
       {
         path: '*',
         redirectTo: '',
+        canActivate: [AdminGuard],
       },
     ],
   },
   {
     path: 'account',
-    component: AccountPage,
+    component: AccountPage
   },
 ];
 

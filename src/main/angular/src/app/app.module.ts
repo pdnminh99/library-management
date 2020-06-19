@@ -62,6 +62,7 @@ import {ViewLoanComponent} from './components/view-loan.component';
 import {LoanToolbarComponent} from './components/loan-toolbar.component';
 import {LoanDeleteConfirmComponent} from './components/loan-delete-confirm.component';
 import {LoanFormComponent} from './components/loan-form.component';
+import {AdminGuard} from './guards/admin.guard';
 
 @NgModule({
   declarations: [
@@ -129,7 +130,8 @@ import {LoanFormComponent} from './components/loan-form.component';
     MatProgressBarModule
   ],
   providers: [
-    {provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: {hasBackdrop: true}}
+    {provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: {hasBackdrop: true}},
+    AdminGuard
   ],
   bootstrap: [AppRoot],
 })

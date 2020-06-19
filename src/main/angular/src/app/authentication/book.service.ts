@@ -233,8 +233,13 @@ export class BookService implements EntityService<Book> {
     this.isProcessing = true;
     this.http.post(`${environment.serverURI}/book/${this.auth.currentUser.userId}`, req, {
       headers: this.corsHeaders
-    }).subscribe(res => {
-      this.isProcessing = false;
+    }).subscribe({
+      next: res => {
+        this.isProcessing = false;
+      },
+      error: err => {
+        this.isProcessing = false;
+      }
     });
   }
 

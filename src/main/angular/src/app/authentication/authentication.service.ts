@@ -6,8 +6,8 @@ import {isNullOrUndefined} from 'util';
 import {Observable, Subscription} from 'rxjs';
 import {AngularFirestore, AngularFirestoreDocument} from '@angular/fire/firestore';
 import {BasicUser, UserType} from '../models/Model';
-import Timestamp = firebase.firestore.Timestamp;
 import {Router} from '@angular/router';
+import Timestamp = firebase.firestore.Timestamp;
 
 @Injectable({
   providedIn: 'root',
@@ -44,7 +44,7 @@ export class AuthenticationService {
   ) {
     this.userObservable = firebaseAuth.user;
     this.userObservable.subscribe(async (user) => {
-      if (user == null) {
+      if (user === null) {
         return;
       }
       this.currentUserDoc = firestore.collection('users')
@@ -52,6 +52,43 @@ export class AuthenticationService {
       await this.handleUserInfo(user);
     });
   }
+
+  public isAuthenticated(): boolean {
+    return this.currentUser !== undefined;
+  }
+
+  // public async isCurrentUserMatch(role: UserType): Promise<boolean> {
+  //   if (this.currentUser !== undefined && this.currentUser !== null) {
+  //     return this.currentUser.type === role;
+  //   }
+  //   this.userObservable = this.firebaseAuth.user;
+  //   const user = await this.firebaseAuth.user.toPromise();
+  //   console.log(`user is ${user}`);
+  //   if (user === null || user === undefined) {
+  //     return false;
+  //   }
+  //   this.currentUserDoc = this.firestore.collection('users')
+  //     .doc<BasicUser>(user.uid);
+  //   const userDoc = (await this.currentUserDoc.get().toPromise()).data() as BasicUser;
+  //   return userDoc?.type === role;
+  //   // return new Promise<boolean>(((resolve, reject) => {
+  //   //   if (this.currentUser !== undefined && this.currentUser !== null) {
+  //   //     resolve(this.currentUser.type === role);
+  //   //   }
+  //   //   this.userObservable = this.firebaseAuth.user;
+  //   //   this.firebaseAuth.user.toPromise()
+  //   //     .then(user => {
+  //   //       console.log(`user is ${user}`);
+  //   //       if (user === null) {
+  //   //         reject('User not logged in!');
+  //   //       }
+  //   //       this.currentUserDoc = this.firestore.collection('users')
+  //   //         .doc<BasicUser>(user.uid);
+  //   //       return this.handleUserInfo(user);
+  //   //     })
+  //   //     .then(_ => resolve(true));
+  //   // }));
+  // }
 
   public signInWithGoogleAccount(): Promise<void> {
     this._isProcessing = true;

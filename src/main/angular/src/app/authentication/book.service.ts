@@ -6,6 +6,7 @@ import {AngularFirestore} from '@angular/fire/firestore';
 import {MemberService} from './member.service';
 import {AuthenticationService} from './authentication.service';
 import {Router} from '@angular/router';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +21,8 @@ export class BookService implements EntityService<Book> {
               private firestore: AngularFirestore,
               private router: Router,
               public memberService: MemberService,
-              public auth: AuthenticationService) {
+              public auth: AuthenticationService,
+              private snackBar: MatSnackBar) {
     this.getAll();
   }
 
@@ -165,20 +167,32 @@ export class BookService implements EntityService<Book> {
     this.http.delete(`${environment.serverURI}/book/${bookIdToRemove}/${this.auth.currentUser.userId}`, {
       headers: this.corsHeaders,
     })
-      .subscribe(_ => {
-        this.selectedItem = undefined;
-        for (let index = 0; index < this.items.length; index++) {
-          if (this.items[index].bookId === bookIdToRemove) {
-            this.items.splice(index, 1);
+      .subscribe({
+        next: _ => {
+          for (let index = 0; index < this.items.length; index++) {
+            if (this.items[index].bookId === bookIdToRemove) {
+              this.items.splice(index, 1);
+            }
           }
-        }
-        this.isProcessing = false;
-        if (this.items.length > 0) {
-          this.router.navigate(['resources', this.items[0].bookId]).then(() => {
-            this.selectedItem = this.items[0];
+          this.isProcessing = false;
+          this.snackBar.open(`Successfully delete title ${this.selectedItem.title}`, 'Close', {
+            duration: 5000
           });
-        } else {
-          this.router.navigate(['resources']).then(() => {
+          this.selectedItem = undefined;
+
+          if (this.items.length > 0) {
+            this.router.navigate(['resources', this.items[0].bookId]).then(() => {
+              this.selectedItem = this.items[0];
+            });
+          } else {
+            this.router.navigate(['resources']).then(() => {
+            });
+          }
+        },
+        error: _ => {
+          this.isProcessing = false;
+          this.snackBar.open(`An error has occurred while trying to delete ${this.selectedItem.title}`, 'Close', {
+            duration: 5000
           });
         }
       });
@@ -200,14 +214,22 @@ export class BookService implements EntityService<Book> {
     };
 
     this.isProcessing = true;
+    console.log(`${environment.serverURI}/book/${this.auth.currentUser.userId}`);
+
     this.http.patch(`${environment.serverURI}/book/${this.auth.currentUser.userId}`, req, {
       headers: this.corsHeaders
     }).subscribe({
-      next: value => {
+      next: _ => {
         this.isProcessing = false;
+        this.snackBar.open(`Update successfully.`, 'Close', {
+          duration: 5000
+        });
       },
-      error: err => {
-        console.log(err);
+      error: _ => {
+        this.isProcessing = false;
+        this.snackBar.open(`An error has occurred while trying to update "${this.selectedItem.title}".`, 'Close', {
+          duration: 5000
+        });
       }
     });
   }
@@ -234,11 +256,17 @@ export class BookService implements EntityService<Book> {
     this.http.post(`${environment.serverURI}/book/${this.auth.currentUser.userId}`, req, {
       headers: this.corsHeaders
     }).subscribe({
-      next: res => {
+      next: _ => {
         this.isProcessing = false;
+        this.snackBar.open(`Title create successfully.`, 'Close', {
+          duration: 5000
+        });
       },
-      error: err => {
+      error: _ => {
         this.isProcessing = false;
+        this.snackBar.open(`An error has occurred while trying to create book.`, 'Close', {
+          duration: 5000
+        });
       }
     });
   }

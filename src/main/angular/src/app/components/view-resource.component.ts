@@ -119,7 +119,8 @@ export class ViewResourceComponent {
 
     if (this.bookService.mode === ToolbarMode.CREATE) {
       this.bookService.create(book);
-    } else {
+    }
+    if (this.bookService.mode === ToolbarMode.EDIT) {
       this.bookService.update(book);
     }
     this.bookService.mode = ToolbarMode.STATIC;

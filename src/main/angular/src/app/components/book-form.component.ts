@@ -193,7 +193,7 @@ export class BookFormComponent implements OnInit {
 
   public get isTheSame(): boolean {
     // tslint:disable-next-line:prefer-const
-    let {title, author, description, genre, publisher, yearOfPublishing, count, photoURL} = this.bookForm.value;
+    let {title, author, description, genre, publisher, yearOfPublishing, count, photoURL, position, prefixId} = this.bookForm.value;
     return this.book.title === title &&
       this.book.author === author &&
       this.book.description === description &&
@@ -201,7 +201,9 @@ export class BookFormComponent implements OnInit {
       this.book.publisher === publisher &&
       this.book.yearOfPublishing === yearOfPublishing &&
       this.book.count === count &&
-      this.book.photoURL === photoURL;
+      this.book.photoURL === photoURL &&
+      this.book.position === position &&
+      this.book.prefixId === prefixId;
   }
 
   public emptyImage = 'https://thumbs.dreamstime.com/b/black-linear-photo-camera-logo-like-no-image-available-black-linear-photo-camera-logo-like-no-image-available-flat-stroke-style-106031126.jpg';

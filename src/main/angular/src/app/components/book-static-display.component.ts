@@ -1,5 +1,6 @@
 import {Component, Input} from '@angular/core';
 import {Book} from '../models/Model';
+import {BookFormComponent} from './book-form.component';
 
 
 @Component({
@@ -7,13 +8,9 @@ import {Book} from '../models/Model';
   selector: 'book-static-display-component',
   template: `
     <div id="content-detail">
-      <img class="book-cover" *ngIf="book.photoURL != undefined"
-           [src]="book.photoURL"
-           [alt]="book.title">
       <img class="book-cover"
-           *ngIf="book.photoURL == undefined"
-           [src]="emptyImage"
-           alt="No image found!">
+           [src]="displayURL"
+           [alt]="displayURL">
       <div id="detail">
         <h1 style="font-weight: bolder">{{ book.title || "No content" }}</h1>
 
@@ -67,6 +64,7 @@ import {Book} from '../models/Model';
     }
 
     #content-detail {
+      height: 100%;
       margin: 10px;
       display: flex;
       justify-content: space-around;
@@ -99,6 +97,11 @@ export class BookStaticDisplayComponent {
 
   public get createdAtDisplay(): string {
     return this.book.createdAt.toDate().toUTCString();
+  }
+
+  public get displayURL(): string {
+    const photo = this.book.photoURL;
+    return BookFormComponent.checkURL(photo) ? photo : this.emptyImage;
   }
 
   public emptyImage = 'https://thumbs.dreamstime.com/b/black-linear-photo-camera-logo-like-no-image-available-black-linear-photo-camera-logo-like-no-image-available-flat-stroke-style-106031126.jpg';

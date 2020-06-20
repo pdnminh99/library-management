@@ -27,6 +27,7 @@ import {MAT_DIALOG_DEFAULT_OPTIONS, MatDialogModule} from '@angular/material/dia
 import {TextFieldModule} from '@angular/cdk/text-field';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
 
 import {environment} from 'src/environments/environment';
 import {SearchBarComponent} from './components/search-bar.component';
@@ -119,6 +120,7 @@ import {MemberGuard} from './guards/member.guard';
     MatDatepickerModule,
     ReactiveFormsModule,
     TextFieldModule,
+    MatSnackBarModule,
     MatAutocompleteModule,
     MatProgressBarModule
   ],

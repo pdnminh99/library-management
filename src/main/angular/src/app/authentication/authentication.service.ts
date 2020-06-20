@@ -173,7 +173,6 @@ export class AuthenticationService {
       .then(_ => {
         this._currentUser = {...this._currentUser, ...newInfo} as BasicUser;
       });
-
   }
 
   public isCurrentUserMatch(type: UserType) {

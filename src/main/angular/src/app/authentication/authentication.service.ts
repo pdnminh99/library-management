@@ -2,7 +2,6 @@ import {Injectable} from '@angular/core';
 import {AngularFireAuth} from '@angular/fire/auth';
 import * as firebase from 'firebase';
 import {auth, User} from 'firebase';
-import {isNullOrUndefined} from 'util';
 import {Observable, Subscription} from 'rxjs';
 import {AngularFirestore, AngularFirestoreDocument} from '@angular/fire/firestore';
 import {BasicUser, UserType} from '../models/Model';
@@ -27,7 +26,7 @@ export class AuthenticationService {
   }
 
   public get isLoggedIn(): boolean {
-    return !isNullOrUndefined(this._currentUser);
+    return this._currentUser !== undefined && this._currentUser !== null;
   }
 
   // tslint:disable-next-line:variable-name
@@ -52,43 +51,6 @@ export class AuthenticationService {
       await this.handleUserInfo(user);
     });
   }
-
-  public isAuthenticated(): boolean {
-    return this.currentUser !== undefined;
-  }
-
-  // public async isCurrentUserMatch(role: UserType): Promise<boolean> {
-  //   if (this.currentUser !== undefined && this.currentUser !== null) {
-  //     return this.currentUser.type === role;
-  //   }
-  //   this.userObservable = this.firebaseAuth.user;
-  //   const user = await this.firebaseAuth.user.toPromise();
-  //   console.log(`user is ${user}`);
-  //   if (user === null || user === undefined) {
-  //     return false;
-  //   }
-  //   this.currentUserDoc = this.firestore.collection('users')
-  //     .doc<BasicUser>(user.uid);
-  //   const userDoc = (await this.currentUserDoc.get().toPromise()).data() as BasicUser;
-  //   return userDoc?.type === role;
-  //   // return new Promise<boolean>(((resolve, reject) => {
-  //   //   if (this.currentUser !== undefined && this.currentUser !== null) {
-  //   //     resolve(this.currentUser.type === role);
-  //   //   }
-  //   //   this.userObservable = this.firebaseAuth.user;
-  //   //   this.firebaseAuth.user.toPromise()
-  //   //     .then(user => {
-  //   //       console.log(`user is ${user}`);
-  //   //       if (user === null) {
-  //   //         reject('User not logged in!');
-  //   //       }
-  //   //       this.currentUserDoc = this.firestore.collection('users')
-  //   //         .doc<BasicUser>(user.uid);
-  //   //       return this.handleUserInfo(user);
-  //   //     })
-  //   //     .then(_ => resolve(true));
-  //   // }));
-  // }
 
   public signInWithGoogleAccount(): Promise<void> {
     this._isProcessing = true;
@@ -205,12 +167,16 @@ export class AuthenticationService {
       });
   }
 
-  update(newInfo: BasicUser) {
-    console.log(newInfo);
+  public update(newInfo: BasicUser): void {
     this.firestore.collection('users').doc(this._currentUser.userId)
       .update(newInfo)
       .then(_ => {
         this._currentUser = {...this._currentUser, ...newInfo} as BasicUser;
       });
+
+  }
+
+  public isCurrentUserMatch(type: UserType) {
+    return this.currentUser?.type === type;
   }
 }

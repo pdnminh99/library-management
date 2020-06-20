@@ -3,12 +3,11 @@ import {Routes, RouterModule} from '@angular/router';
 import {ResourcePage} from './pages/resources.page';
 import {DashboardPage} from './pages/dashboard.page';
 import {MembersPage} from './pages/members.page';
-import {BookLoansPage} from './pages/book-loans.page';
 import {AccountPage} from './pages/account.page';
 import {ViewResourceComponent} from './components/view-resource.component';
 import {ViewMemberComponent} from './components/view-member.component';
-import {ViewLoanComponent} from './components/view-loan.component';
 import {AdminGuard} from './guards/admin.guard';
+import {MemberGuard} from './guards/member.guard';
 
 const routes: Routes = [
   {
@@ -65,30 +64,9 @@ const routes: Routes = [
     ],
   },
   {
-    path: 'loans',
-    component: BookLoansPage,
-    canActivate: [AdminGuard],
-    children: [
-      {
-        path: '',
-        component: ViewLoanComponent,
-        canActivate: [AdminGuard],
-      },
-      {
-        path: ':loanId',
-        component: ViewLoanComponent,
-        canActivate: [AdminGuard],
-      },
-      {
-        path: '*',
-        redirectTo: '',
-        canActivate: [AdminGuard],
-      },
-    ],
-  },
-  {
     path: 'account',
-    component: AccountPage
+    component: AccountPage,
+    canActivate: [MemberGuard]
   },
 ];
 

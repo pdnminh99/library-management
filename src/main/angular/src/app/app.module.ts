@@ -40,7 +40,6 @@ import {ContentRowComponent} from './components/content-row.component';
 import {MiniSideNavigationButtonComponent} from './components/mini-sidenav-btn.component';
 import {ResourcePage} from './pages/resources.page';
 import {DashboardPage} from './pages/dashboard.page';
-import {BookLoansPage} from './pages/book-loans.page';
 import {AccountPage} from './pages/account.page';
 import {MembersPage} from './pages/members.page';
 import {SearchPage} from './pages/search.page';
@@ -58,11 +57,9 @@ import {BookFormComponent} from './components/book-form.component';
 import {MemberFormComponent} from './components/member-form.component';
 import {MemberToolbarComponent} from './components/member-toolbar.component';
 import {RoleChangeConfirmComponent} from './components/role-change-confirm.component';
-import {ViewLoanComponent} from './components/view-loan.component';
-import {LoanToolbarComponent} from './components/loan-toolbar.component';
-import {LoanDeleteConfirmComponent} from './components/loan-delete-confirm.component';
-import {LoanFormComponent} from './components/loan-form.component';
 import {AdminGuard} from './guards/admin.guard';
+import {BookCardShowcaseComponent} from './components/book-card-showcase.component';
+import {MemberGuard} from './guards/member.guard';
 
 @NgModule({
   declarations: [
@@ -80,7 +77,6 @@ import {AdminGuard} from './guards/admin.guard';
     ResourcePage,
     DashboardPage,
     SearchPage,
-    BookLoansPage,
     AccountPage,
     MembersPage,
     ContentRowComponent,
@@ -95,10 +91,7 @@ import {AdminGuard} from './guards/admin.guard';
     MemberFormComponent,
     MemberToolbarComponent,
     RoleChangeConfirmComponent,
-    ViewLoanComponent,
-    LoanToolbarComponent,
-    LoanDeleteConfirmComponent,
-    LoanFormComponent
+    BookCardShowcaseComponent
   ],
   imports: [
     AngularFireModule.initializeApp(environment.firebase),
@@ -131,7 +124,8 @@ import {AdminGuard} from './guards/admin.guard';
   ],
   providers: [
     {provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: {hasBackdrop: true}},
-    AdminGuard
+    AdminGuard,
+    MemberGuard
   ],
   bootstrap: [AppRoot],
 })

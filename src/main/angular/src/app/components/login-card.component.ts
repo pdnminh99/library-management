@@ -157,14 +157,14 @@ import {Displayable} from '../models/Model';
             style="text-align: left;"
             *ngIf="isSignIn"
           >
-              Or create new <a (click)="isSignIn = false">here.</a>
+              Or create new <a href="javascript:void(0)" (click)="isSignIn = false">here</a>.
             </span>
 
           <span
             style="text-align: left;"
             *ngIf="!isSignIn"
           >
-              Or sign in <a (click)="isSignIn = true">here.</a>
+              Or sign in <a href="javascript:void(0)" (click)="isSignIn = true">here</a>.
             </span>
         </div>
       </div>

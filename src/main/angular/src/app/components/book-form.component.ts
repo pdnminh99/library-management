@@ -242,7 +242,7 @@ export class BookFormComponent implements OnInit {
     prefixId: ['', [Validators.maxLength(4), Validators.minLength(3)]]
   });
 
-  private static checkURL(url?: string): boolean {
+  public static checkURL(url?: string): boolean {
     return (url?.match(/\.(jpeg|jpg|gif|png)$/) != null);
   }
 

@@ -1,6 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormBuilder, Validators} from '@angular/forms';
 import {BasicUser, UserType} from '../models/Model';
+import {BookFormComponent} from './book-form.component';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -73,6 +74,13 @@ import {BasicUser, UserType} from '../models/Model';
   `
 })
 export class MemberFormComponent {
+
+  public get displayURL(): string {
+    const photo = this.user.photoURL;
+    return BookFormComponent.checkURL(photo) ? photo : this.emptyImage;
+  }
+
+  public emptyImage = 'https://thumbs.dreamstime.com/b/black-linear-photo-camera-logo-like-no-image-available-black-linear-photo-camera-logo-like-no-image-available-flat-stroke-style-106031126.jpg';
 
   // tslint:disable-next-line:variable-name
   @Input()

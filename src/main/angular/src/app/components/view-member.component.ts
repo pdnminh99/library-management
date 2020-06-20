@@ -2,6 +2,7 @@ import {Component} from '@angular/core';
 import {MemberService} from '../authentication/member.service';
 import {UserType} from '../models/Model';
 import {ActivatedRoute, Router} from '@angular/router';
+import {BookFormComponent} from './book-form.component';
 
 
 @Component({
@@ -18,8 +19,8 @@ import {ActivatedRoute, Router} from '@angular/router';
       <div *ngIf="memberService.selectedItem !== undefined" id="info-card">
         <div style="flex: 1; display: flex; flex-direction: column; align-content: center; justify-content: center; align-items: center;">
           <img style="max-width: 200px; min-width: 100px; margin-bottom: 10px; border-radius: 100px;"
-               [src]="memberService.selectedItem.photoURL"
-               [alt]="memberService.selectedItem.displayName"
+               [src]="displayURL"
+               [alt]="displayURL"
           />
           <mat-chip-list>
             <mat-chip *ngIf="isAdmin" color="warn" selected>Admin</mat-chip>
@@ -44,6 +45,14 @@ import {ActivatedRoute, Router} from '@angular/router';
   `]
 })
 export class ViewMemberComponent {
+
+  public get displayURL(): string {
+    const photo = this.memberService.selectedItem.photoURL;
+    return BookFormComponent.checkURL(photo) ? photo : this.emptyImage;
+  }
+
+  public emptyImage = 'https://thumbs.dreamstime.com/b/black-linear-photo-camera-logo-like-no-image-available-black-linear-photo-camera-logo-like-no-image-available-flat-stroke-style-106031126.jpg';
+
 
   public get isAdmin(): boolean {
     return this.memberService.selectedItem.type === UserType.ADMIN;

@@ -191,13 +191,13 @@ export class AuthenticationService {
   public update(newInfo: BasicUser): void {
     this._isProcessing = true;
     let req = {
-      displayName: newInfo.displayName,
-      description: newInfo.description,
-      photoURL: newInfo.photoURL,
-      phoneNumber: newInfo.phoneNumber,
-      address: newInfo.address,
-      citizenId: newInfo.citizenId,
-      email: newInfo.email,
+      displayName: newInfo.displayName ?? "",
+      description: newInfo.description ?? "",
+      photoURL: newInfo.photoURL ?? "",
+      phoneNumber: newInfo.phoneNumber ?? "",
+      address: newInfo.address ?? "",
+      citizenId: newInfo.citizenId ?? "",
+      email: newInfo.email ?? "",
       gender: newInfo.gender,
     };
     this.firestore

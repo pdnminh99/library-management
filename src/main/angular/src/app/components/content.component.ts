@@ -10,7 +10,7 @@ import {PageEvent} from '@angular/material/paginator';
       <div id="left-panel">
         <mat-form-field id="mini-searchbar" appearance="fill">
           <input
-            (keyup.enter)="onSearch.emit($event.target.value)"
+            (keyup)="onSearch.emit($event.target.value)"
             matInput
             type="text"
             placeholder="Search"

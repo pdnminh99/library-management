@@ -194,7 +194,7 @@ export class AuthenticationService {
       address: newInfo.address,
       citizenId: newInfo.citizenId,
       email: newInfo.email,
-      gender: newInfo.email,
+      gender: newInfo.gender,
     };
     console.log(req);
     this.firestore

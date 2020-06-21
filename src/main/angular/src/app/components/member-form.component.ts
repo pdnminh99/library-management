@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { FormBuilder, Validators } from "@angular/forms";
-import { BasicUser, UserType } from "../models/Model";
-import { BookFormComponent } from "./book-form.component";
+import { BasicUser } from "../models/Model";
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -100,18 +99,12 @@ import { BookFormComponent } from "./book-form.component";
 })
 export class MemberFormComponent {
   // tslint:disable-next-line:variable-name
-  @Input()
-  public isEditMode = false;
-
-  // tslint:disable-next-line:variable-name
   private _user: BasicUser;
 
   @Input()
   public set user(value: BasicUser) {
     this._user = value;
-    if (!this.isEditMode) {
-      this.reset();
-    }
+    this.reset();
   }
 
   public get user(): BasicUser {

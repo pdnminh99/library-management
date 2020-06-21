@@ -87,6 +87,7 @@ export class ViewResourceComponent {
       } else {
         this.bookService.selectedItem = undefined;
       }
+      this.bookService.mode = ToolbarMode.STATIC;
     });
   }
 

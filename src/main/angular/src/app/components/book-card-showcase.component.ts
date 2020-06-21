@@ -8,8 +8,8 @@ import { BookFormComponent } from "./book-form.component";
   template: `
     <mat-card>
       <mat-card-header>
-        <mat-card-title>{{ book.title }}</mat-card-title>
-        <mat-card-subtitle>{{ book.subtitle }}</mat-card-subtitle>
+        <mat-card-title>{{ book.title.slice(0, 30) }}</mat-card-title>
+        <mat-card-subtitle>{{ book.subtitle.slice(0, 100) }}</mat-card-subtitle>
       </mat-card-header>
       <img
         style="max-width: 200px; max-height: 200px;"

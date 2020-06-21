@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
 import { MemberService } from "../authentication/member.service";
-import { UserType } from "../models/Model";
+import { UserType, ToolbarMode, BasicUser } from "../models/Model";
 import { ActivatedRoute, Router } from "@angular/router";
 import { BookFormComponent } from "./book-form.component";
 
@@ -14,7 +14,7 @@ import { BookFormComponent } from "./book-form.component";
         mode="query"
       ></mat-progress-bar>
       <member-toolbar-component
-        (onRoleChange)="handleEdit($event)"
+        (onRoleChange)="handleRoleChange($event)"
         [service]="memberService"
       ></member-toolbar-component>
 
@@ -34,8 +34,8 @@ import { BookFormComponent } from "./book-form.component";
           </mat-chip-list>
         </div>
         <member-form-component
+          (onSubmit)="handleEdit($event)"
           (onImageEdit)="handleImageChange($event)"
-          [isEditMode]="false"
           [user]="memberService.selectedItem"
           style="flex: 2;"
         ></member-form-component>
@@ -96,9 +96,13 @@ export class ViewMemberComponent {
     this.isImageFailed = false;
   }
 
-  public handleEdit(role: UserType) {
+  public handleRoleChange(role: UserType) {
     const current = this.memberService.selectedItem;
     current.type = role;
     this.memberService.update(current);
+  }
+
+  public handleEdit(patch: BasicUser) {
+    this.memberService.update(patch);
   }
 }

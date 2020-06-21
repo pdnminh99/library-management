@@ -154,17 +154,18 @@ export class BookService implements EntityService<Book> {
             v.data().position
           );
         });
-        if (this.selectedItem !== undefined) {
+        if (this.selectedItem !== undefined && this.selectedItem !== null) {
           for (const item of this._items) {
             if (item.bookId === this.selectedItem.bookId) {
               this.selectedItem = item;
               break;
             }
-            for (const member of this.memberService.items) {
-              if (this.selectedItem.creatorId === member.userId) {
-                this.selectedItem.creator = member;
-                break;
-              }
+          }
+
+          for (const member of this.memberService.items) {
+            if (this.selectedItem.creatorId === member.userId) {
+              this.selectedItem.creator = member;
+              break;
             }
           }
         }
@@ -265,7 +266,7 @@ export class BookService implements EntityService<Book> {
       yearOfPublishing: instance.yearOfPublishing,
       photoURL: instance.photoURL,
       description: instance.description,
-      prefixId: instance.prefixId,
+      prefixId: instance.prefixId?.toUpperCase(),
       count: instance.count,
       position: instance.position,
     };
@@ -286,17 +287,6 @@ export class BookService implements EntityService<Book> {
           this.snackBar.open(`Update successfully.`, "Close", {
             duration: 5000,
           });
-          if (this.selectedItem.bookId === instance.bookId) {
-            this.selectedItem.title = instance.title;
-            this.selectedItem.author = instance.author;
-            this.selectedItem.genre = instance.genre;
-            this.selectedItem.publisher = instance.publisher;
-            this.selectedItem.yearOfPublishing = instance.yearOfPublishing;
-            this.selectedItem.photoURL = instance.photoURL;
-            this.selectedItem.description = instance.description;
-            this.selectedItem.count = instance.count;
-            this.selectedItem.position = instance.position;
-          }
         },
         error: (_) => {
           this.isProcessing = false;
@@ -324,7 +314,7 @@ export class BookService implements EntityService<Book> {
       yearOfPublishing: instance.yearOfPublishing,
       photoURL: instance.photoURL,
       description: instance.description,
-      prefixId: instance.prefixId,
+      prefixId: instance.prefixId?.toUpperCase(),
       count: instance.count,
       position: instance.position,
     };

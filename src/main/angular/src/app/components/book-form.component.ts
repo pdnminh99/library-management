@@ -232,6 +232,7 @@ export class BookFormComponent implements OnInit {
   } as Book;
 
   public bookForm = this.formBuilder.group({
+    bookId: [''],
     title: ['', Validators.required],
     author: ['', Validators.required],
     description: [''],
@@ -241,7 +242,7 @@ export class BookFormComponent implements OnInit {
     count: [0],
     photoURL: [''],
     position: [''],
-    prefixId: ['', [Validators.maxLength(4), Validators.minLength(3)]]
+    prefixId: ['', [Validators.required, Validators.maxLength(4), Validators.minLength(3)]]
   });
 
   public static checkURL(url?: string): boolean {
@@ -259,6 +260,7 @@ export class BookFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.bookForm.patchValue({
+      bookId: this.book.bookId,
       title: this.book.title,
       author: this.book.author,
       description: this.book.description,

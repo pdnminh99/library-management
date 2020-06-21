@@ -1,55 +1,76 @@
-import {Injectable} from '@angular/core';
-import {Book, DisplayColor, EntityService, Filter, ToolbarMode} from '../models/Model';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {environment} from '../../environments/environment';
-import {AngularFirestore} from '@angular/fire/firestore';
-import {MemberService} from './member.service';
-import {AuthenticationService} from './authentication.service';
-import {Router} from '@angular/router';
-import {MatSnackBar} from '@angular/material/snack-bar';
+import { Injectable } from "@angular/core";
+import {
+  Book,
+  DisplayColor,
+  EntityService,
+  Filter,
+  ToolbarMode,
+} from "../models/Model";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { environment } from "../../environments/environment";
+import { AngularFirestore } from "@angular/fire/firestore";
+import { MemberService } from "./member.service";
+import { AuthenticationService } from "./authentication.service";
+import { Router } from "@angular/router";
+import { MatSnackBar } from "@angular/material/snack-bar";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class BookService implements EntityService<Book> {
-
   public get isActive(): boolean {
     return this.selectedItem !== undefined;
   }
 
-  constructor(private http: HttpClient,
-              private firestore: AngularFirestore,
-              private router: Router,
-              public memberService: MemberService,
-              public auth: AuthenticationService,
-              private snackBar: MatSnackBar) {
+  constructor(
+    private http: HttpClient,
+    private firestore: AngularFirestore,
+    private router: Router,
+    public memberService: MemberService,
+    public auth: AuthenticationService,
+    private snackBar: MatSnackBar
+  ) {
     this.getAll();
   }
 
   public get items(): Book[] {
     if (this.currentKey.length === 0) {
       return this._items
-        .filter(value => BookService.filterByFilterMethod(this.selectedFilter.filterId, value))
-        .slice(this.pageNumber * this.pageSize > 0 ? this.pageNumber * this.pageSize - 1 : 0, this.pageSize);
+        .filter((value) =>
+          BookService.filterByFilterMethod(this.selectedFilter.filterId, value)
+        )
+        .slice(
+          this.pageNumber * this.pageSize > 0
+            ? this.pageNumber * this.pageSize - 1
+            : 0,
+          this.pageSize
+        );
     }
     return this._items
-      .filter(i => this.filterByKey(this.currentKey, i))
-      .filter(value => BookService.filterByFilterMethod(this.selectedFilter.filterId, value))
-      .slice(this.pageNumber * this.pageSize > 0 ? this.pageNumber * this.pageSize - 1 : 0, this.pageSize);
+      .filter((i) => this.filterByKey(this.currentKey, i))
+      .filter((value) =>
+        BookService.filterByFilterMethod(this.selectedFilter.filterId, value)
+      )
+      .slice(
+        this.pageNumber * this.pageSize > 0
+          ? this.pageNumber * this.pageSize - 1
+          : 0,
+        this.pageSize
+      );
   }
 
   public get len(): number {
     return this._items.length;
   }
 
-  private currentKey = '';
+  private currentKey = "";
 
   public isProcessing = false;
 
   private corsHeaders = new HttpHeaders({
-    'Content-Type': 'application/json',
-    Accept: 'application/json',
-    'Access-Control-Allow-Origin': 'http://localhost:8080/api/v1/book',
+    "Content-Type": "application/json",
+    Accept: "application/json",
+    "Access-Control-Allow-Origin": "http://localhost:8080/api/v1/book",
   });
 
   // tslint:disable-next-line:variable-name
@@ -63,17 +84,20 @@ export class BookService implements EntityService<Book> {
   public filters: Filter[] = [
     {
       filterId: 0,
-      description: 'All',
-      icon: undefined
-    }, {
+      description: "All",
+      icon: undefined,
+    },
+    {
       filterId: 1,
-      description: 'Almost out of stock',
-      icon: 'priority_high'
-    }, {
+      description: "Almost out of stock",
+      icon: "priority_high",
+    },
+    {
       filterId: 2,
-      description: 'Out of stock',
-      icon: 'warning'
-    }];
+      description: "Out of stock",
+      icon: "warning",
+    },
+  ];
 
   selectedFilter: Filter = this.filters[0];
 
@@ -96,20 +120,23 @@ export class BookService implements EntityService<Book> {
   public filterByKey(key: string, item: Book): boolean {
     key = key.toLowerCase();
 
-    return item.title?.toLowerCase().includes(key) ||
+    return (
+      item.title?.toLowerCase().includes(key) ||
       item.creator?.displayName?.toLowerCase().includes(key) ||
       item.genre?.toLowerCase().includes(key) ||
       item.publisher?.toLowerCase().includes(key) ||
-      item.author?.toLowerCase().includes(key);
+      item.author?.toLowerCase().includes(key)
+    );
   }
 
   public getAll(): void {
     this.isProcessing = true;
-    this.firestore.collection<Book>('books')
+    this.firestore
+      .collection<Book>("books")
       .snapshotChanges()
-      .subscribe(value => {
-        const data = value.map(v => v.payload.doc);
-        this._items = data.map(v => {
+      .subscribe((value) => {
+        const data = value.map((v) => v.payload.doc);
+        this._items = data.map((v) => {
           return new Book(
             v.id,
             v.data().title,
@@ -124,8 +151,23 @@ export class BookService implements EntityService<Book> {
             v.data().creatorId,
             undefined,
             v.data().prefixId,
-            v.data().position);
+            v.data().position
+          );
         });
+        if (this.selectedItem !== undefined) {
+          for (const item of this._items) {
+            if (item.bookId === this.selectedItem.bookId) {
+              this.selectedItem = item;
+              break;
+            }
+            for (const member of this.memberService.items) {
+              if (this.selectedItem.creatorId === member.userId) {
+                this.selectedItem.creator = member;
+                break;
+              }
+            }
+          }
+        }
         this.isProcessing = false;
       });
   }
@@ -143,10 +185,11 @@ export class BookService implements EntityService<Book> {
         return;
       }
     }
-    this.firestore.collection<Book>('books')
+    this.firestore
+      .collection<Book>("books")
       .doc(bookId)
       .get()
-      .subscribe(value => {
+      .subscribe((value) => {
         this.selectedItem = value.data() as Book;
         this.selectedItem.bookId = value.id;
         for (const member of this.memberService.items) {
@@ -164,37 +207,51 @@ export class BookService implements EntityService<Book> {
     }
     this.isProcessing = true;
     const bookIdToRemove = this.selectedItem.bookId;
-    this.http.delete(`${environment.serverURI}/book/${bookIdToRemove}/${this.auth.currentUser.userId}`, {
-      headers: this.corsHeaders,
-    })
+    this.http
+      .delete(
+        `${environment.serverURI}/book/${bookIdToRemove}/${this.auth.currentUser.userId}`,
+        {
+          headers: this.corsHeaders,
+        }
+      )
       .subscribe({
-        next: _ => {
+        next: (_) => {
           for (let index = 0; index < this.items.length; index++) {
             if (this.items[index].bookId === bookIdToRemove) {
               this.items.splice(index, 1);
             }
           }
           this.isProcessing = false;
-          this.snackBar.open(`Successfully delete title ${this.selectedItem.title}`, 'Close', {
-            duration: 5000
-          });
+          this.snackBar.open(
+            `Successfully delete title ${this.selectedItem.title}`,
+            "Close",
+            {
+              duration: 5000,
+            }
+          );
           this.selectedItem = undefined;
 
           if (this.items.length > 0) {
-            this.router.navigate(['resources', this.items[0].bookId]).then(() => {
-              this.selectedItem = this.items[0];
-            });
+            this.router
+              .navigate(["resources", this.items[0].bookId])
+              .then(() => {
+                this.selectedItem = this.items[0];
+              });
           } else {
-            this.router.navigate(['resources']).then(() => {
-            });
+            this.selectedItem = undefined;
+            this.router.navigate(["resources"]).then(() => {});
           }
         },
-        error: _ => {
+        error: (_) => {
           this.isProcessing = false;
-          this.snackBar.open(`An error has occurred while trying to delete ${this.selectedItem.title}`, 'Close', {
-            duration: 5000
-          });
-        }
+          this.snackBar.open(
+            `An error has occurred while trying to delete ${this.selectedItem.title}`,
+            "Close",
+            {
+              duration: 5000,
+            }
+          );
+        },
       });
   }
 
@@ -210,28 +267,48 @@ export class BookService implements EntityService<Book> {
       description: instance.description,
       prefixId: instance.prefixId,
       count: instance.count,
-      position: instance.position
+      position: instance.position,
     };
 
     this.isProcessing = true;
-    console.log(`${environment.serverURI}/book/${this.auth.currentUser.userId}`);
 
-    this.http.patch(`${environment.serverURI}/book/${this.auth.currentUser.userId}`, req, {
-      headers: this.corsHeaders
-    }).subscribe({
-      next: _ => {
-        this.isProcessing = false;
-        this.snackBar.open(`Update successfully.`, 'Close', {
-          duration: 5000
-        });
-      },
-      error: _ => {
-        this.isProcessing = false;
-        this.snackBar.open(`An error has occurred while trying to update "${this.selectedItem.title}".`, 'Close', {
-          duration: 5000
-        });
-      }
-    });
+    this.http
+      .patch(
+        `${environment.serverURI}/book/${this.auth.currentUser.userId}`,
+        req,
+        {
+          headers: this.corsHeaders,
+        }
+      )
+      .subscribe({
+        next: (_) => {
+          this.isProcessing = false;
+          this.snackBar.open(`Update successfully.`, "Close", {
+            duration: 5000,
+          });
+          if (this.selectedItem.bookId === instance.bookId) {
+            this.selectedItem.title = instance.title;
+            this.selectedItem.author = instance.author;
+            this.selectedItem.genre = instance.genre;
+            this.selectedItem.publisher = instance.publisher;
+            this.selectedItem.yearOfPublishing = instance.yearOfPublishing;
+            this.selectedItem.photoURL = instance.photoURL;
+            this.selectedItem.description = instance.description;
+            this.selectedItem.count = instance.count;
+            this.selectedItem.position = instance.position;
+          }
+        },
+        error: (_) => {
+          this.isProcessing = false;
+          this.snackBar.open(
+            `An error has occurred while trying to update "${this.selectedItem.title}".`,
+            "Close",
+            {
+              duration: 5000,
+            }
+          );
+        },
+      });
   }
 
   public create(instance: Book): void {
@@ -249,26 +326,36 @@ export class BookService implements EntityService<Book> {
       description: instance.description,
       prefixId: instance.prefixId,
       count: instance.count,
-      position: instance.position
+      position: instance.position,
     };
 
     this.isProcessing = true;
-    this.http.post(`${environment.serverURI}/book/${this.auth.currentUser.userId}`, req, {
-      headers: this.corsHeaders
-    }).subscribe({
-      next: _ => {
-        this.isProcessing = false;
-        this.snackBar.open(`Title create successfully.`, 'Close', {
-          duration: 5000
-        });
-      },
-      error: _ => {
-        this.isProcessing = false;
-        this.snackBar.open(`An error has occurred while trying to create book.`, 'Close', {
-          duration: 5000
-        });
-      }
-    });
+    this.http
+      .post(
+        `${environment.serverURI}/book/${this.auth.currentUser.userId}`,
+        req,
+        {
+          headers: this.corsHeaders,
+        }
+      )
+      .subscribe({
+        next: (_) => {
+          this.isProcessing = false;
+          this.snackBar.open(`Title create successfully.`, "Close", {
+            duration: 5000,
+          });
+        },
+        error: (_) => {
+          this.isProcessing = false;
+          this.snackBar.open(
+            `An error has occurred while trying to create book.`,
+            "Close",
+            {
+              duration: 5000,
+            }
+          );
+        },
+      });
   }
 
   public onSearch(key: string): void {

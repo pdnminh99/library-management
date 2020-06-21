@@ -11,11 +11,6 @@ import {MemberGuard} from './guards/member.guard';
 
 const routes: Routes = [
   {
-    path: '',
-    pathMatch: 'full',
-    redirectTo: 'dashboard',
-  },
-  {
     path: 'dashboard',
     component: DashboardPage,
   },
@@ -67,6 +62,11 @@ const routes: Routes = [
     path: 'account',
     component: AccountPage,
     canActivate: [MemberGuard]
+  },
+  {
+    path: '',
+    pathMatch: 'full',
+    redirectTo: 'dashboard',
   },
 ];
 

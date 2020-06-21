@@ -3,6 +3,7 @@ import {BasicUser, EntityService, Filter, ToolbarMode, UserType} from '../models
 import {AngularFirestore, QueryDocumentSnapshot} from '@angular/fire/firestore';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 
 @Injectable({
@@ -14,11 +15,9 @@ export class MemberService implements EntityService<BasicUser> {
     return this.selectedItem !== undefined;
   }
 
-  constructor(public firestore: AngularFirestore) {
+  constructor(public firestore: AngularFirestore, private snackBar: MatSnackBar) {
     this.observer = this.firestore.collection<BasicUser>('users',
-      ref => ref
-        .limit(10)
-        .orderBy('createdAt'))
+      ref => ref.orderBy('createdAt'))
       .snapshotChanges()
       .pipe(
         map(docs => docs.map(d => d.payload.doc))
@@ -145,10 +144,21 @@ export class MemberService implements EntityService<BasicUser> {
   }
 
   update(patch: BasicUser): void {
+    this.isProcessing = true;
     this.firestore.collection<BasicUser>('users')
       .doc(patch.userId)
       .update({type: patch.type})
       .then(() => {
+        this.isProcessing = false;
+        this.snackBar.open('Update successfully!', 'Close', {
+          duration: 5000
+        });
+      })
+      .catch(_ => {
+        this.isProcessing = false;
+        this.snackBar.open('Update failed!', 'Close', {
+          duration: 5000
+        });
       });
   }
 

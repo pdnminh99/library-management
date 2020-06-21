@@ -1,8 +1,7 @@
-import {Component, Inject} from '@angular/core';
-import {AuthenticationService} from '../authentication/authentication.service';
-import {Router} from '@angular/router';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {Displayable} from '../models/Model';
+import { Component } from "@angular/core";
+import { AuthenticationService } from "../authentication/authentication.service";
+import { Router } from "@angular/router";
+import { MatDialogRef } from "@angular/material/dialog";
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -27,31 +26,6 @@ import {Displayable} from '../models/Model';
             matSuffix
             aria-label="Clear"
             (click)="email = ''"
-          >
-            <mat-icon>close</mat-icon>
-          </button>
-        </mat-form-field>
-
-        <br *ngIf="!isSignIn" />
-
-        <mat-form-field
-          style="width: 100%;"
-          appearance="fill"
-          *ngIf="!isSignIn"
-        >
-          <mat-label>Display name</mat-label>
-          <input
-            matInput
-            [disabled]="isProcessing"
-            [(ngModel)]="displayName"
-            placeholder="Full name"
-          />
-          <button
-            mat-icon-button
-            *ngIf="displayName.length > 0"
-            matSuffix
-            aria-label="Clear"
-            (click)="displayName = ''"
           >
             <mat-icon>close</mat-icon>
           </button>
@@ -178,8 +152,6 @@ export class LoginCardComponent {
 
   public password = "";
 
-  public displayName = "";
-
   public reenterPassword = "";
 
   public hide = true;
@@ -193,7 +165,6 @@ export class LoginCardComponent {
   }
 
   constructor(
-    private router: Router,
     private auth: AuthenticationService,
     public dialogRef: MatDialogRef<LoginCardComponent>
   ) {}
@@ -204,7 +175,7 @@ export class LoginCardComponent {
       .then((_) => {
         this.dialogRef.close();
       })
-      .catch((err) => {
+      .catch(() => {
         this.dialogRef.close();
       });
   }
@@ -218,12 +189,8 @@ export class LoginCardComponent {
       this.errorMessage = "Invalid email/password!";
       return;
     }
-    if (this.displayName.length === 0) {
-      this.errorMessage = "Display name cannot empty.";
-      return;
-    }
     this.auth
-      .signUp(this.email, this.password, this.displayName)
+      .signUp(this.email, this.password)
       .then((_) => this.dialogRef.close());
   }
 

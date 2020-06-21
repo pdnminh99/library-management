@@ -139,9 +139,8 @@ export class AuthenticationService {
   public signUp(
     email: string,
     password: string,
-    displayName: string
+    displayName: string = ""
   ): Promise<boolean> {
-    console.log(`Display is ${displayName}.`);
     this._isProcessing = true;
     return this.firebaseAuth
       .createUserWithEmailAndPassword(email, password)
@@ -156,7 +155,7 @@ export class AuthenticationService {
       })
       .then((v) => {
         if (!v.exists) {
-          const newUser: BasicUser = {
+          this._currentUser = {
             userId: v.id,
             displayName,
             photoURL: "",
@@ -167,8 +166,7 @@ export class AuthenticationService {
             citizenId: "",
             createdAt: Timestamp.now(),
           } as BasicUser;
-          this._currentUser = newUser;
-          return this.currentUserDoc.set(newUser);
+          return this.currentUserDoc.set(this.currentUser);
         } else {
           this._currentUser = v.data() as BasicUser;
           this._currentUser.userId = v.id;
@@ -176,7 +174,13 @@ export class AuthenticationService {
       })
       .then((_) => true)
       .catch((_) => {
-        console.log("Use is false");
+        this.snackBar.open(
+          "Fail to sign up due to invalid user info! Please try again.",
+          "Close",
+          {
+            duration: 5000,
+          }
+        );
         return false;
       })
       .finally(() => {
@@ -196,7 +200,6 @@ export class AuthenticationService {
       email: newInfo.email,
       gender: newInfo.gender,
     };
-    console.log(req);
     this.firestore
       .collection("users")
       .doc(this._currentUser.userId)

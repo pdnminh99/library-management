@@ -179,22 +179,6 @@ export class MemberService implements EntityService<BasicUser> {
   delete(): void {}
 
   update(patch: BasicUser): void {
-    // this.isProcessing = true;
-    // this.firestore.collection<BasicUser>('users')
-    //   .doc(patch.userId)
-    //   .update({type: patch.type})
-    //   .then(() => {
-    //     this.isProcessing = false;
-    //     this.snackBar.open('Update successfully!', 'Close', {
-    //       duration: 5000
-    //     });
-    //   })
-    //   .catch(_ => {
-    //     this.isProcessing = false;
-    //     this.snackBar.open('Update failed!', 'Close', {
-    //       duration: 5000
-    //     });
-    //   });
     this.isProcessing = true;
     let req = {
       displayName: patch.displayName,

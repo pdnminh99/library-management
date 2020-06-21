@@ -1,18 +1,24 @@
-import {Injectable} from '@angular/core';
-import {CanActivate} from '@angular/router';
-import {AuthenticationService} from '../authentication/authentication.service';
+import { Injectable } from "@angular/core";
+import { CanActivate, Router } from "@angular/router";
+import { AuthenticationService } from "../authentication/authentication.service";
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class MemberGuard implements CanActivate {
-  constructor(private authenticationService: AuthenticationService) {
-  }
+  constructor(
+    private authenticationService: AuthenticationService,
+    private router: Router
+  ) {}
 
   canActivate(
-    route: import('@angular/router').ActivatedRouteSnapshot,
-    state: import('@angular/router').RouterStateSnapshot
+    route: import("@angular/router").ActivatedRouteSnapshot,
+    state: import("@angular/router").RouterStateSnapshot
   ): boolean {
-    return this.authenticationService.isLoggedIn;
+    let allow = this.authenticationService.isLoggedIn;
+    if (!allow) {
+      this.router.navigate(["dashboard"]).then((_) => {});
+    }
+    return allow;
   }
 }

@@ -86,6 +86,17 @@ import { FormBuilder, Validators } from "@angular/forms";
         </div>
 
         <mat-form-field appearance="outline" style="width: 100%;">
+          <mat-label>Photo URL</mat-label>
+          <input
+            matInput
+            formControlName="photoURL"
+            (keydown)="handleImageChange()"
+          />
+        </mat-form-field>
+
+        <br />
+
+        <mat-form-field appearance="outline" style="width: 100%;">
           <mat-label>Description</mat-label>
           <textarea matInput formControlName="description"></textarea>
         </mat-form-field>
@@ -134,10 +145,12 @@ export class AccountPage implements OnInit {
 
   public isImageFailed = false;
 
+  private _image = this.auth.currentUser?.photoURL ?? "";
+
   public get displayImage(): string {
     return this.isImageFailed
       ? "https://thumbs.dreamstime.com/b/black-linear-photo-camera-logo-like-no-image-available-black-linear-photo-camera-logo-like-no-image-available-flat-stroke-style-106031126.jpg"
-      : this.auth.currentUser?.photoURL ?? "";
+      : this._image;
   }
 
   public reset() {
@@ -183,6 +196,7 @@ export class AccountPage implements OnInit {
       citizenId,
       gender,
       phoneNumber,
+      photoURL,
     } = this.userForm.value;
     return (
       this.user.displayName === displayName &&
@@ -191,7 +205,8 @@ export class AccountPage implements OnInit {
       this.user.description === description &&
       this.user.citizenId === citizenId &&
       this.user.gender === gender &&
-      this.user.phoneNumber === phoneNumber
+      this.user.phoneNumber === phoneNumber &&
+      this.user.photoURL === photoURL
     );
   }
 
@@ -202,7 +217,11 @@ export class AccountPage implements OnInit {
   }
 
   public onSubmit() {
-    console.log(this.userForm.value);
     this.auth.update(this.userForm.value);
+  }
+
+  public handleImageChange() {
+    this._image = this.userForm.value.photoURL;
+    this.isImageFailed = false;
   }
 }

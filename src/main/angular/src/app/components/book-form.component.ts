@@ -304,7 +304,7 @@ export class BookFormComponent implements OnInit {
     position: [""],
     prefixId: [
       "",
-      [Validators.required, Validators.maxLength(4), Validators.minLength(3)],
+      [Validators.required, Validators.maxLength(3), Validators.minLength(2)],
     ],
   });
 

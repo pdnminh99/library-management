@@ -54,6 +54,8 @@ export class Book implements Displayable {
       color: DisplayColor.NORMAL
     };
   }
+
+  isActive = false;
 }
 
 export class BasicUser implements Displayable {
@@ -104,6 +106,8 @@ export class BasicUser implements Displayable {
   public get title(): string {
     return this.displayName;
   }
+
+  isActive = false;
 }
 
 export enum UserType {
@@ -119,6 +123,7 @@ export interface Displayable {
   subtitle: string;
   status: Status;
   navigate: string;
+  isActive: boolean;
 }
 
 export class Loan implements Displayable {
@@ -155,6 +160,8 @@ export class Loan implements Displayable {
   public get navigate(): string {
     return this.loanId;
   }
+
+  isActive = false;
 
 }
 

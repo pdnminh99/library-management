@@ -1,19 +1,16 @@
-import { Injectable } from "@angular/core";
-import { AngularFireAuth } from "@angular/fire/auth";
-import * as firebase from "firebase";
-import { auth, User } from "firebase";
-import { Observable, Subscription } from "rxjs";
-import {
-  AngularFirestore,
-  AngularFirestoreDocument,
-} from "@angular/fire/firestore";
-import { BasicUser, UserType } from "../models/Model";
-import { Router } from "@angular/router";
+import {Injectable} from '@angular/core';
+import {AngularFireAuth} from '@angular/fire/auth';
+import * as firebase from 'firebase';
+import {auth, User} from 'firebase';
+import {Observable, Subscription} from 'rxjs';
+import {AngularFirestore, AngularFirestoreDocument,} from '@angular/fire/firestore';
+import {BasicUser, UserType} from '../models/Model';
+import {Router} from '@angular/router';
+import {MatSnackBar} from '@angular/material/snack-bar';
 import Timestamp = firebase.firestore.Timestamp;
-import { MatSnackBar } from "@angular/material/snack-bar";
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class AuthenticationService {
   private currentUserDoc: AngularFirestoreDocument;
@@ -52,7 +49,7 @@ export class AuthenticationService {
         return;
       }
       this.currentUserDoc = firestore
-        .collection("users")
+        .collection('users')
         .doc<BasicUser>(user.uid);
       await this.handleUserInfo(user);
     });
@@ -64,7 +61,7 @@ export class AuthenticationService {
       .signInWithPopup(new auth.GoogleAuthProvider())
       .then((user) => {
         this.currentUserDoc = this.firestore
-          .collection("users")
+          .collection('users')
           .doc<BasicUser>(user.user.uid);
         return user.user;
       })
@@ -82,7 +79,7 @@ export class AuthenticationService {
     const data = await this.currentUserDoc.get().toPromise();
 
     if (!data.exists) {
-      const { uid, displayName, photoURL, phoneNumber, email } = user;
+      const {uid, displayName, photoURL, phoneNumber, email} = user;
       this._currentUser = {
         userId: uid,
         displayName,
@@ -90,8 +87,8 @@ export class AuthenticationService {
         email,
         phoneNumber,
         type: UserType.GUEST,
-        address: "",
-        citizenId: "",
+        address: '',
+        citizenId: '',
         createdAt: Timestamp.now(),
       } as BasicUser;
       await this.currentUserDoc.set(this._currentUser);
@@ -103,6 +100,11 @@ export class AuthenticationService {
       .valueChanges()
       .subscribe((value) => {
         this._currentUser = value as BasicUser;
+        this.router.navigate(['dashboard']).then(_ => {
+        });
+        this.snackBar.open('Your role was changed', 'Close', {
+          duration: 5000
+        });
       });
   }
 
@@ -112,7 +114,8 @@ export class AuthenticationService {
       this.currentUserDoc = null;
       this.userSubscription?.unsubscribe();
       this.userSubscription = null;
-      this.router.navigate(["dashboard"]).then((_) => {});
+      this.router.navigate(['dashboard']).then((_) => {
+      });
     });
   }
 
@@ -122,10 +125,10 @@ export class AuthenticationService {
       .signInWithEmailAndPassword(email, password)
       .then((user) => {
         if (user.user === undefined) {
-          throw new Error("User not found!");
+          throw new Error('User not found!');
         }
         this.currentUserDoc = this.firestore
-          .collection("users")
+          .collection('users')
           .doc<BasicUser>(user.user.uid);
         return this.handleUserInfo(user.user);
       })
@@ -139,17 +142,17 @@ export class AuthenticationService {
   public signUp(
     email: string,
     password: string,
-    displayName: string = ""
+    displayName: string = ''
   ): Promise<boolean> {
     this._isProcessing = true;
     return this.firebaseAuth
       .createUserWithEmailAndPassword(email, password)
       .then((user) => {
         if (user.user === undefined) {
-          throw new Error("User not found!");
+          throw new Error('User not found!');
         }
         this.currentUserDoc = this.firestore
-          .collection("users")
+          .collection('users')
           .doc<BasicUser>(user.user.uid);
         return this.currentUserDoc.get().toPromise();
       })
@@ -158,12 +161,12 @@ export class AuthenticationService {
           this._currentUser = {
             userId: v.id,
             displayName,
-            photoURL: "",
+            photoURL: '',
             email,
-            phoneNumber: "",
+            phoneNumber: '',
             type: UserType.GUEST,
-            address: "",
-            citizenId: "",
+            address: '',
+            citizenId: '',
             createdAt: Timestamp.now(),
           } as BasicUser;
           return this.currentUserDoc.set(this.currentUser);
@@ -175,8 +178,8 @@ export class AuthenticationService {
       .then((_) => true)
       .catch((_) => {
         this.snackBar.open(
-          "Fail to sign up due to invalid user info! Please try again.",
-          "Close",
+          'Fail to sign up due to invalid user info! Please try again.',
+          'Close',
           {
             duration: 5000,
           }
@@ -191,17 +194,17 @@ export class AuthenticationService {
   public update(newInfo: BasicUser): void {
     this._isProcessing = true;
     let req = {
-      displayName: newInfo.displayName ?? "",
-      description: newInfo.description ?? "",
-      photoURL: newInfo.photoURL ?? "",
-      phoneNumber: newInfo.phoneNumber ?? "",
-      address: newInfo.address ?? "",
-      citizenId: newInfo.citizenId ?? "",
-      email: newInfo.email ?? "",
+      displayName: newInfo.displayName ?? '',
+      description: newInfo.description ?? '',
+      photoURL: newInfo.photoURL ?? '',
+      phoneNumber: newInfo.phoneNumber ?? '',
+      address: newInfo.address ?? '',
+      citizenId: newInfo.citizenId ?? '',
+      email: newInfo.email ?? '',
       gender: newInfo.gender,
     };
     this.firestore
-      .collection("users")
+      .collection('users')
       .doc(this._currentUser.userId)
       .update(req)
       .then((_) => {
@@ -215,13 +218,13 @@ export class AuthenticationService {
         this._currentUser.gender = newInfo.gender;
 
         this._isProcessing = false;
-        this.snackBar.open("Update successfully!", "Close", {
+        this.snackBar.open('Update successfully!', 'Close', {
           duration: 5000,
         });
       })
       .catch((_) => {
         this._isProcessing = false;
-        this.snackBar.open("Update failed! Please try again.", "Close", {
+        this.snackBar.open('Update failed! Please try again.', 'Close', {
           duration: 5000,
         });
       });

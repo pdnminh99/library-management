@@ -1,21 +1,21 @@
-import { Injectable } from "@angular/core";
+import {Injectable} from '@angular/core';
 import {
   BasicUser,
   EntityService,
   Filter,
   ToolbarMode,
   UserType,
-} from "../models/Model";
+} from '../models/Model';
 import {
   AngularFirestore,
   QueryDocumentSnapshot,
-} from "@angular/fire/firestore";
-import { Observable } from "rxjs";
-import { map } from "rxjs/operators";
-import { MatSnackBar } from "@angular/material/snack-bar";
+} from '@angular/fire/firestore';
+import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class MemberService implements EntityService<BasicUser> {
   public get isActive(): boolean {
@@ -27,7 +27,7 @@ export class MemberService implements EntityService<BasicUser> {
     private snackBar: MatSnackBar
   ) {
     this.observer = this.firestore
-      .collection<BasicUser>("users", (ref) => ref.orderBy("createdAt"))
+      .collection<BasicUser>('users', (ref) => ref.orderBy('createdAt'))
       .snapshotChanges()
       .pipe(map((docs) => docs.map((d) => d.payload.doc)));
     this.observer.subscribe((v) => {
@@ -66,7 +66,11 @@ export class MemberService implements EntityService<BasicUser> {
             ? this.pageNumber * this.pageSize - 1
             : 0,
           this.pageSize
-        );
+        )
+        .map(b => {
+          b.isActive = b.userId === this.selectedItem?.userId;
+          return b;
+        });
     }
     return this._items
       .filter((i) => this.filterByKey(this.currentKey, i))
@@ -78,7 +82,11 @@ export class MemberService implements EntityService<BasicUser> {
           ? this.pageNumber * this.pageSize - 1
           : 0,
         this.pageSize
-      );
+      )
+      .map(b => {
+        b.isActive = b.userId === this.selectedItem?.userId;
+        return b;
+      });
   }
 
   public get len(): number {
@@ -94,7 +102,7 @@ export class MemberService implements EntityService<BasicUser> {
 
   selectedItem: BasicUser;
 
-  private currentKey = "";
+  private currentKey = '';
 
   public mode: ToolbarMode = ToolbarMode.STATIC;
 
@@ -105,22 +113,22 @@ export class MemberService implements EntityService<BasicUser> {
   filters: Filter[] = [
     {
       filterId: 0,
-      description: "All",
+      description: 'All',
       icon: undefined,
     },
     {
       filterId: 1,
-      description: "Admins",
-      icon: "support_agent",
+      description: 'Admins',
+      icon: 'support_agent',
     },
     {
       filterId: 2,
-      description: "Members",
-      icon: "people",
+      description: 'Members',
+      icon: 'people',
     },
     {
       filterId: 3,
-      description: "Guests",
+      description: 'Guests',
       icon: undefined,
     },
   ];
@@ -158,7 +166,8 @@ export class MemberService implements EntityService<BasicUser> {
     this.pageNumber = page;
   }
 
-  getAll(): void {}
+  getAll(): void {
+  }
 
   get(id: string): void {
     for (const book of this.items) {
@@ -168,7 +177,7 @@ export class MemberService implements EntityService<BasicUser> {
       }
     }
     this.firestore
-      .collection<BasicUser>("users")
+      .collection<BasicUser>('users')
       .doc(id)
       .get()
       .subscribe((value) => {
@@ -176,11 +185,12 @@ export class MemberService implements EntityService<BasicUser> {
       });
   }
 
-  delete(): void {}
+  delete(): void {
+  }
 
   update(patch: BasicUser): void {
     this.isProcessing = true;
-    let req = {
+    const req = {
       displayName: patch.displayName,
       description: patch.description,
       photoURL: patch.photoURL,
@@ -191,8 +201,9 @@ export class MemberService implements EntityService<BasicUser> {
       gender: patch.gender,
       type: patch.type,
     };
+    console.log(req);
     this.firestore
-      .collection("users")
+      .collection('users')
       .doc(this.selectedItem.userId)
       .update(req)
       .then((_) => {
@@ -207,19 +218,20 @@ export class MemberService implements EntityService<BasicUser> {
         this.selectedItem.type = patch.type;
 
         this.isProcessing = false;
-        this.snackBar.open("Update successfully!", "Close", {
+        this.snackBar.open('Update successfully!', 'Close', {
           duration: 5000,
         });
       })
       .catch((_) => {
         this.isProcessing = false;
-        this.snackBar.open("Update failed! Please try again.", "Close", {
+        this.snackBar.open('Update failed! Please try again.', 'Close', {
           duration: 5000,
         });
       });
   }
 
-  create(instance: BasicUser): void {}
+  create(instance: BasicUser): void {
+  }
 
   onSearch(key: string): void {
     this.currentKey = key;

@@ -1,10 +1,10 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { BasicUser } from "../models/Model";
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {FormBuilder, Validators} from '@angular/forms';
+import {BasicUser} from '../models/Model';
 
 @Component({
   // tslint:disable-next-line:component-selector
-  selector: "member-form-component",
+  selector: 'member-form-component',
   template: `
     <form
       style="padding: 0 10px;"
@@ -18,33 +18,33 @@ import { BasicUser } from "../models/Model";
         <div style="flex: 1; margin-right: 20px; width: 100%;">
           <mat-form-field appearance="outline" style="width: 100%;">
             <mat-label>Full name</mat-label>
-            <input matInput formControlName="displayName" />
+            <input matInput formControlName="displayName"/>
             <mat-hint>*Required</mat-hint>
           </mat-form-field>
 
-          <br />
+          <br/>
 
           <mat-form-field appearance="outline" style="width: 100%;">
             <mat-label>Email</mat-label>
-            <input matInput formControlName="email" />
+            <input matInput formControlName="email"/>
             <mat-hint>*Required</mat-hint>
           </mat-form-field>
 
-          <br />
+          <br/>
 
           <mat-form-field appearance="outline" style="width: 100%;">
             <mat-label>Address</mat-label>
-            <input matInput formControlName="address" />
+            <input matInput formControlName="address"/>
           </mat-form-field>
         </div>
 
         <div style="flex: 1;">
           <mat-form-field appearance="outline" style="width: 100%;">
             <mat-label>Citizen ID</mat-label>
-            <input matInput formControlName="citizenId" />
+            <input matInput formControlName="citizenId"/>
           </mat-form-field>
 
-          <br />
+          <br/>
 
           <mat-form-field appearance="outline" style="width: 100%;">
             <mat-label>Gender</mat-label>
@@ -55,11 +55,11 @@ import { BasicUser } from "../models/Model";
             </mat-select>
           </mat-form-field>
 
-          <br />
+          <br/>
 
           <mat-form-field appearance="outline" style="width: 100%;">
             <mat-label>Phone Number</mat-label>
-            <input matInput formControlName="phoneNumber" />
+            <input matInput formControlName="phoneNumber"/>
           </mat-form-field>
         </div>
       </div>
@@ -119,14 +119,14 @@ export class MemberFormComponent {
   public onImageEdit = new EventEmitter<string>();
 
   public userForm = this.fb.group({
-    displayName: ["", Validators.required],
-    email: ["", [Validators.required, Validators.email]],
-    address: [""],
-    description: [""],
-    citizenId: [""],
-    gender: ["MALE", Validators.required],
-    phoneNumber: [""],
-    photoURL: [""],
+    displayName: ['', Validators.required],
+    email: ['', [Validators.required, Validators.email]],
+    address: [''],
+    description: [''],
+    citizenId: [''],
+    gender: ['MALE', Validators.required],
+    phoneNumber: [''],
+    photoURL: [''],
   });
 
   public handleImageEdit() {
@@ -138,21 +138,21 @@ export class MemberFormComponent {
       displayName: this.user.displayName,
       email: this.user.email,
       address: this.user.address,
-      description: this.user.description,
-      citizenId: this.user.citizenId,
+      description: this.user.description ?? '',
+      citizenId: this.user.citizenId ?? '',
       gender: this.user.gender,
-      phoneNumber: this.user.phoneNumber,
-      photoURL: this.user.photoURL,
+      phoneNumber: this.user.phoneNumber ?? '',
+      photoURL: this.user.photoURL ?? '',
     });
   }
 
   public get joinedTimestamp(): string {
-    return this.user.createdAt.toDate().toUTCString() ?? "[Unknown]";
+    return this.user.createdAt.toDate().toUTCString() ?? '[Unknown]';
   }
 
   public get isTheSame(): boolean {
     // tslint:disable-next-line:prefer-const
-    let {
+    const {
       displayName,
       email,
       address,
@@ -174,11 +174,12 @@ export class MemberFormComponent {
     );
   }
 
-  constructor(public fb: FormBuilder) {}
+  constructor(public fb: FormBuilder) {
+  }
 
   public handleSubmit() {
     // tslint:disable-next-line:prefer-const
-    let {
+    const {
       displayName,
       email,
       address,

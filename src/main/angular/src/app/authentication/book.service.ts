@@ -1,21 +1,21 @@
-import { Injectable } from "@angular/core";
+import {Injectable} from '@angular/core';
 import {
   Book,
   DisplayColor,
   EntityService,
   Filter,
   ToolbarMode,
-} from "../models/Model";
-import { HttpClient, HttpHeaders } from "@angular/common/http";
-import { environment } from "../../environments/environment";
-import { AngularFirestore } from "@angular/fire/firestore";
-import { MemberService } from "./member.service";
-import { AuthenticationService } from "./authentication.service";
-import { Router } from "@angular/router";
-import { MatSnackBar } from "@angular/material/snack-bar";
+} from '../models/Model';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {environment} from '../../environments/environment';
+import {AngularFirestore} from '@angular/fire/firestore';
+import {MemberService} from './member.service';
+import {AuthenticationService} from './authentication.service';
+import {Router} from '@angular/router';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class BookService implements EntityService<Book> {
   public get isActive(): boolean {
@@ -44,7 +44,11 @@ export class BookService implements EntityService<Book> {
             ? this.pageNumber * this.pageSize - 1
             : 0,
           this.pageSize
-        );
+        )
+        .map(b => {
+          b.isActive = b.bookId === this.selectedItem?.bookId;
+          return b;
+        });
     }
     return this._items
       .filter((i) => this.filterByKey(this.currentKey, i))
@@ -56,21 +60,25 @@ export class BookService implements EntityService<Book> {
           ? this.pageNumber * this.pageSize - 1
           : 0,
         this.pageSize
-      );
+      )
+      .map(b => {
+        b.isActive = b.bookId === this.selectedItem?.bookId;
+        return b;
+      });
   }
 
   public get len(): number {
     return this._items.length;
   }
 
-  private currentKey = "";
+  private currentKey = '';
 
   public isProcessing = false;
 
   private corsHeaders = new HttpHeaders({
-    "Content-Type": "application/json",
-    Accept: "application/json",
-    "Access-Control-Allow-Origin": "http://localhost:8080/api/v1/book",
+    'Content-Type': 'application/json',
+    Accept: 'application/json',
+    'Access-Control-Allow-Origin': 'http://localhost:8080/api/v1/book',
   });
 
   // tslint:disable-next-line:variable-name
@@ -84,18 +92,18 @@ export class BookService implements EntityService<Book> {
   public filters: Filter[] = [
     {
       filterId: 0,
-      description: "All",
+      description: 'All',
       icon: undefined,
     },
     {
       filterId: 1,
-      description: "Almost out of stock",
-      icon: "priority_high",
+      description: 'Almost out of stock',
+      icon: 'priority_high',
     },
     {
       filterId: 2,
-      description: "Out of stock",
-      icon: "warning",
+      description: 'Out of stock',
+      icon: 'warning',
     },
   ];
 
@@ -132,7 +140,7 @@ export class BookService implements EntityService<Book> {
   public getAll(): void {
     this.isProcessing = true;
     this.firestore
-      .collection<Book>("books")
+      .collection<Book>('books')
       .snapshotChanges()
       .subscribe((value) => {
         const data = value.map((v) => v.payload.doc);
@@ -187,7 +195,7 @@ export class BookService implements EntityService<Book> {
       }
     }
     this.firestore
-      .collection<Book>("books")
+      .collection<Book>('books')
       .doc(bookId)
       .get()
       .subscribe((value) => {
@@ -225,7 +233,7 @@ export class BookService implements EntityService<Book> {
           this.isProcessing = false;
           this.snackBar.open(
             `Successfully delete title ${this.selectedItem.title}`,
-            "Close",
+            'Close',
             {
               duration: 5000,
             }
@@ -234,20 +242,21 @@ export class BookService implements EntityService<Book> {
 
           if (this.items.length > 0) {
             this.router
-              .navigate(["resources", this.items[0].bookId])
+              .navigate(['resources', this.items[0].bookId])
               .then(() => {
                 this.selectedItem = this.items[0];
               });
           } else {
             this.selectedItem = undefined;
-            this.router.navigate(["resources"]).then(() => {});
+            this.router.navigate(['resources']).then(() => {
+            });
           }
         },
         error: (_) => {
           this.isProcessing = false;
           this.snackBar.open(
             `An error has occurred while trying to delete ${this.selectedItem.title}`,
-            "Close",
+            'Close',
             {
               duration: 5000,
             }
@@ -284,7 +293,7 @@ export class BookService implements EntityService<Book> {
       .subscribe({
         next: (_) => {
           this.isProcessing = false;
-          this.snackBar.open(`Update successfully.`, "Close", {
+          this.snackBar.open(`Update successfully.`, 'Close', {
             duration: 5000,
           });
         },
@@ -292,7 +301,7 @@ export class BookService implements EntityService<Book> {
           this.isProcessing = false;
           this.snackBar.open(
             `An error has occurred while trying to update "${this.selectedItem.title}".`,
-            "Close",
+            'Close',
             {
               duration: 5000,
             }
@@ -331,7 +340,7 @@ export class BookService implements EntityService<Book> {
       .subscribe({
         next: (_) => {
           this.isProcessing = false;
-          this.snackBar.open(`Title create successfully.`, "Close", {
+          this.snackBar.open(`Title create successfully.`, 'Close', {
             duration: 5000,
           });
         },
@@ -339,7 +348,7 @@ export class BookService implements EntityService<Book> {
           this.isProcessing = false;
           this.snackBar.open(
             `An error has occurred while trying to create book.`,
-            "Close",
+            'Close',
             {
               duration: 5000,
             }

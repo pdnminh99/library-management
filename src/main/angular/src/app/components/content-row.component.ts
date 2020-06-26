@@ -8,7 +8,13 @@ import {DisplayColor, Status} from '../models/Model';
     <button
       mat-stroked-button
       class="content-card"
-      [ngClass]="{ 'content-card-active': isActive, 'content-card-warn': isWarn, 'content-card-primary': isPrimary }"
+      [ngClass]="{
+      'content-card-active-normal': isActive && isNormal,
+      'content-card-active-warn': isActive && isWarn,
+      'content-card-active-primary': isActive && isPrimary,
+      'content-card-warn': isWarn && !isActive,
+      'content-card-primary': isPrimary && !isActive
+      }"
     >
       <div
         style="width: 100%; padding: 3px 0; background-color: transparent; display: flex; justify-content: flex-start; align-items: center; align-content: center;">
@@ -35,10 +41,21 @@ import {DisplayColor, Status} from '../models/Model';
         text-align: left;
       }
 
-      .content-card-active {
+      .content-card-active-normal {
         background-color: #e3edfd;
         color: #236ed4;
       }
+
+      .content-card-active-primary {
+        background-color: #fdeacd;
+        color: #fe9e16;
+      }
+
+      .content-card-active-warn {
+        background-color: #fde9e7;
+        color: crimson;
+      }
+
 
       .content-card {
         width: 100%;
@@ -50,8 +67,16 @@ import {DisplayColor, Status} from '../models/Model';
         color: crimson;
       }
 
+      .content-card-warn:hover {
+        background-color: #fde9e7;
+      }
+
       .content-card-primary {
         color: #fe9e16;
+      }
+
+      .content-card-primary:hover {
+        background-color: #fdeacd;
       }
     `,
   ],
